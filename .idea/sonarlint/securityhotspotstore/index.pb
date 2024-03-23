@@ -1,0 +1,31 @@
+
+I
+buildSrc/build.gradle.kts,d/9/d90b697280fada81e52ec92d24725920f1cb087b
+@
+build.gradle.kts,d/b/dbcff70658daf80b53ce624f6adcaa529df5ed8d
+X
+(gradle/wrapper/gradle-wrapper.properties,f/b/fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
+D
+app/build.gradle.kts,d/2/d2a4383452aad84a18429a5844d31330a012a9e6
+^
+.buildSrc/src/main/kotlin/BuildAndroidConfig.kt,0/f/0f128440e92f0ebf299a933bbd7fd9a4cc88c409
+F
+app/proguard-rules.pro,9/e/9e08934d811afe28fbc77aaa3c0d747b94348db9
+P
+ buildSrc/src/main/kotlin/Libs.kt,e/9/e9d78a4d98854247532ab6e0a00fa572b36ee871
+C
+settings.gradle.kts,7/4/749edfcc96398253e5b3416184e95c46621da850
+E
+core/build.gradle.kts,d/7/d72846b7b418aa17de692d1ccf924c738cf8dbe5
+k
+;buildSrc/src/main/kotlin/commons/android-library.gradle.kts,f/6/f6ff6c4c702a1d71f6e6e8de9ca97a7ce45f4579
+A
+gradle.properties,2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4
+T
+$buildSrc/src/main/kotlin/Versions.kt,d/f/df7250bdfd4d4cbe77a1ebc3b950afc6e6bcfecd
+Q
+!core/src/main/AndroidManifest.xml,a/e/ae00e14a93cb05cbe86f462a3bad74d51f6b1afc
+P
+ app/src/main/AndroidManifest.xml,8/c/8c55c3ccc257e5907959013f99656e4c8ec3903e
+‰
+Yapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/EFormWeighmentActivity.kt,0/b/0b0c5dbcf6a9f742b21390fc11cc662ba893f795

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MainTheme" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+    </style>
+
+    <style name="MainTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="SplashScreenTheme" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background, animated icon, and animation
+        duration. -->
+        <item name="windowSplashScreenBackground">@color/color_primary</item>
+
+        <!-- Use windowSplashScreenAnimatedIcon to add a drawable or an animated
+             drawable. One of these is required. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_sawitpro</item>
+        <!-- Required for animated icons. -->
+        <item name="windowSplashScreenAnimationDuration">200</item>
+
+        <!-- Set the theme of the Activity that directly follows your splash
+        screen. This is required. -->
+        <item name="postSplashScreenTheme">@style/MainTheme.NoActionBar</item>
+    </style>
+
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="roundedImageHeader" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomLeft">30dp</item>
+        <item name="cornerSizeBottomRight">30dp</item>
+    </style>
+
+    <style name="MainTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="colorPrimary">@color/color_accent_dark</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="hintTextAppearance">@style/TextLabel</item>
+        <item name="android:textColorHint">@color/grey2</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:backgroundTint">@drawable/selector_text_input</item>
+        <item name="helperTextTextAppearance">@style/HelperLabel</item>
+        <item name="boxStrokeColor">@drawable/selector_edit_text</item>
+        <item name="boxStrokeErrorColor">@android:color/holo_red_dark</item>
+        <item name="errorTextAppearance">@style/TextErrorLabel</item>
+    </style>
+
+    <style name="MainRemoveLineBottomEdittext" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxStrokeColor">@android:color/transparent</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeErrorColor">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="MainEditText">
+        <item name="colorPrimary">@color/color_accent_dark</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">@color/grey4</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="drawableTint">@color/color_primary_dark</item>
+    </style>
+
+    <style name="MainEditTextNew">
+        <item name="colorPrimary">@color/color_accent_dark</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/grey4</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="drawableTint">@color/color_primary_dark</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+    </style>
+
+    <style name="MainSearchView" parent="Widget.AppCompat.Light.SearchView">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MainDropDownTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="colorPrimary">@color/color_accent_dark</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="hintTextAppearance">@style/TextLabel</item>
+        <item name="endIconDrawable">@drawable/ic_nav_down_24</item>
+        <item name="endIconTint">@color/color_primary_dark</item>
+        <item name="helperTextTextAppearance">@style/HelperLabel</item>
+        <item name="boxStrokeColor">@drawable/selector_edit_text</item>
+        <item name="boxStrokeErrorColor">@android:color/holo_red_dark</item>
+        <item name="errorTextAppearance">@style/TextErrorLabel</item>
+        <item name="android:textColorHint">@color/grey2</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:backgroundTint">@drawable/selector_text_input</item>
+    </style>
+
+    <style name="MainAutoCompleteTextview">
+        <item name="colorPrimary">@color/color_accent_dark</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">@color/grey4</item>
+        <item name="android:backgroundTint">@drawable/selector_text_input</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="android:focusable">false</item>
+        <item name="android:inputType">none</item>
+        <item name="android:longClickable">false</item>
+        <item name="drawableTint">@color/color_primary_dark</item>
+    </style>
+
+    <style name="TextErrorLabel" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="HelperLabel" parent="@android:style/TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey3</item>
+    </style>
+
+    <style name="TextLabel" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/grey4</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="colorAccent">@color/color_accent_dark</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearance.App.TextInputLayoutBlack" parent="@android:style/TextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="colorControlNormal">@color/black</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="colorControlHighlight">@color/black</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <style name="ModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/img_rounded_top_corner_20</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="theme">@style/MainTheme</item>
+        <item name="bottomSheetStyle">@style/ModalStyle</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="DialogCorners">
+        <item name="cornerSize">20dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MaterialAlertDialogRounded" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/DialogCorners</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text
+        </item>
+    </style>
+
+    <style name="RoundedAlertDialog" parent="MaterialAlertDialogRounded">
+        <item name="android:windowBackground">@drawable/img_rounded_corners_20</item>
+        <item name="android:theme">@style/MainTheme.NoActionBar</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="android:windowMinWidthMinor">85%</item>
+    </style>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp"
+    android:background="@drawable/img_rounded_corners_20"
+    android:backgroundTint="@color/green_20"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_margin="4dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_value_filter_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_primary_dark"
+        android:textSize="12sp"
+        tools:text="Urukan" />
+
+</LinearLayout>
