@@ -11,16 +11,17 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.FileUtils
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.generateUniqueId
-import com.blanccone.core.util.Utils.getCurrentDateAndTime
+import com.blanccone.core.util.Utils.getCurrentDateTime
+import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -31,6 +32,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private lateinit var firebaseDb: DatabaseReference
     private lateinit var storageDb: StorageReference
+
+    private val currentDateTime = getCurrentDateTime("ddMMyyyyHHmmssSS")
 
     private var filePath: String? = null
     private var fileUri: Uri? = null
@@ -51,16 +54,21 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firebaseDb = FirebaseDatabase.getInstance().reference
-        storageDb = FirebaseStorage.getInstance().reference
+        firebaseDb = FirebaseDatabase.getInstance().getReference("tickets")
+        storageDb = FirebaseStorage.getInstance().getReference("tickets")
         setView()
         setEvent()
     }
 
     private fun setView() {
         with(binding) {
-            etWaktuTimbang.setText(getCurrentDateAndTime("yyyy/MM/dd HH:mm:ss"))
-            iuvImageBeratMuatan.apply {
+            etWaktuTimbang.setText(
+                currentDateTime.reformatDate(
+                "ddMMyyyyHHmmssSS",
+                "dd/MM/yyyy, HH:mm:ss"
+                )
+            )
+            iuvImageBeratMuatanFirst.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
                 setFieldName(FIELD_NAME)
             }
@@ -69,9 +77,22 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private fun setEvent() {
         with(binding) {
-            iuvImageBeratMuatan.apply {
+            iuvImageBeratMuatanFirst.apply {
                 setOnCameraListener {
                     openCamera()
+                }
+                setOnDeleteListener {
+                    filePath = null
+                    fileUri = null
+                }
+            }
+            iuvImageBeratMuatanFirst.apply {
+                setOnCameraListener {
+                    openCamera()
+                }
+                setOnDeleteListener {
+                    filePath = null
+                    fileUri = null
                 }
             }
             btnSimpan.setOnClickListener {
@@ -117,24 +138,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     return
                 }
             }
-
-            val filePathData = FileUtils.getPathConverted(
-                context = this,
-                path = filePath!!,
-                reqWidth = 800,
-                reqHeight = 800
-            )
-
-            if (filePathData != null) {
-                if (FileUtils.isFileOverSize(File(filePathData), 1)) {
-                    toast("ukuran file maksimal 1 MB")
-                    return
-                } else {
-                    binding.iuvImageBeratMuatan.setFilePath(filePathData)
-                }
-            } else {
-                toast("File path tidak terbaca")
-            }
+            binding.iuvImageBeratMuatanFirst.setFilePath(filePath!!)
         }
     }
 
@@ -145,7 +149,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             val weight = etBeratMuatan.text.toString().toInt()
             val weightOn = etWaktuTimbang.text.toString()
             val status = "Inbound"
-            val combString = "$driverName$licenseNumber${getCurrentDateAndTime("ddMMyyyyHHmmssSS")}"
+            val combString = "$driverName$licenseNumber$currentDateTime"
             val ticket = Ticket(
                 id = generateUniqueId(combString),
                 licenseNumber = licenseNumber,
@@ -162,22 +166,51 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private fun saveData(ticket: Map<String, Any?>) {
         firebaseDb
-            .child("tickets")
-            .child("${ticket["id"]}")
-            .setValue(ticket).addOnCompleteListener {
-            if (it.isSuccessful) {
+            .child(firebaseDb.push().key ?: "")
+            .setValue(ticket)
+            .addOnSuccessListener {
                 saveImage("${ticket["id"]}")
             }
-        }
+            .addOnFailureListener {
+                toast("Gagal menyimpan data")
+            }
     }
 
     private fun saveImage(ticketId: String) {
-        storageDb
-            .child(ticketId)
-            .putFile(fileUri!!).addOnCompleteListener {
-            toast("Data berhasil tersimpan")
-            finish()
+        if(isImageReady(ticketId)) {
+            storageDb
+                .child(ticketId)
+                .putFile(fileUri!!)
+                .addOnSuccessListener {
+                    toast("Data berhasil tersimpan")
+                    finish()
+                }
+                .addOnFailureListener {
+                    toast("Gagal menyimpan data")
+                }
         }
+    }
+
+    private fun isImageReady(ticketId: String): Boolean {
+        var isReady = true
+        val filePathData = FileUtils.getPathConverted(
+            context = this,
+            path = filePath!!,
+            fileName = ticketId
+        )
+
+        if (filePathData != null) {
+            if (FileUtils.isFileOverSize(File(filePathData), 1)) {
+                toast("ukuran file maksimal 1 MB")
+                isReady = false
+            } else {
+                fileUri = File(filePathData).toUri()
+            }
+        } else {
+            toast("File path tidak terbaca")
+            isReady = false
+        }
+        return isReady
     }
 
     private fun getPermissionResult() {
@@ -203,14 +236,14 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     companion object {
         private const val FIELD_NAME = "BERAT_MUATAN"
-        private var isSecondWeight = false
+        private var ticketStatus = ""
 
         fun newInstance(
             context: Context,
-            isSecondWeight: Boolean = false
+            status: String
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
-            this.isSecondWeight = isSecondWeight
+            ticketStatus = status
             context.startActivity(intent)
         }
     }

@@ -77,14 +77,24 @@ object Utils {
         return "${inputString.substring(0, 3).uppercase()}${hashedValue.substring(hashedValue.length - 4)}"
     }
 
-    fun getCurrentDateAndTime(inputFormat: String): String {
-        val formatter = SimpleDateFormat(inputFormat, Locale.getDefault())
+    fun getCurrentDateTime(inputFormat: String): String {
         val currentTime = Calendar.getInstance().time
-        return formatter.format(currentTime)
+        return currentTime.toFormatString(inputFormat)
     }
 
-    fun Date.toFormatString(format: String, locale: Locale = Locale.getDefault()): String {
-        val formatter = SimpleDateFormat(format, locale)
+    fun Date.toFormatString(format: String): String {
+        val formatter = SimpleDateFormat(format, Locale.getDefault())
         return formatter.format(this)
+    }
+
+    fun String.reformatDate(
+        inFormat: String,
+        outFormat: String
+    ): String {
+        val originalFormat = SimpleDateFormat(inFormat, Locale.getDefault())
+        val originalDate = originalFormat.parse(this) ?: Date(0)
+
+        val targetFormat = SimpleDateFormat(outFormat, Locale.getDefault())
+        return targetFormat.format(originalDate)
     }
 }

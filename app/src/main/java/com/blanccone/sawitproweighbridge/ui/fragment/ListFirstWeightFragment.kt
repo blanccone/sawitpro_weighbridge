@@ -53,7 +53,6 @@ class ListFirstWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>() 
         super.onViewCreated(view, savedInstanceState)
         firebaseDb = FirebaseDatabase.getInstance().reference
         setTicketListView()
-        setFilterListView()
         setEvent()
         fetchDataFromFirebase()
     }
@@ -71,6 +70,9 @@ class ListFirstWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>() 
                                 tickets.add(it)
                             }
                         }
+                    }
+                    if (tickets.isNotEmpty()) {
+                        setFilterListView()
                     }
                     updateTickets(tickets)
                 }

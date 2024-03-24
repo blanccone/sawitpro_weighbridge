@@ -71,19 +71,20 @@ object FileUtils {
     fun getPathConverted(
         context: Context,
         path: String,
-        reqWidth: Int? = null,
-        reqHeight: Int? = null
+        fileName: String,
+        reqWidth: Int? = 800,
+        reqHeight: Int? = 800
     ): String? {
-        return compressImage(context, path, reqWidth, reqHeight)
+        return compressImage(context, path, fileName, reqWidth, reqHeight)
     }
 
     fun compressImage(
         context: Context,
         path: String,
+        fileName: String,
         reqWidth: Int? = null,
         reqHeight: Int? = null
     ): String? {
-        var scaledBitmap: Bitmap? = null
         val options = BitmapFactory.Options()
 
         // by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
@@ -134,7 +135,7 @@ object FileUtils {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return getFileNameCompressed(context, bmp, path)
+        return getFileNameCompressed(context, bmp, fileName)
     }
 
     private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
@@ -154,9 +155,12 @@ object FileUtils {
         return inSampleSize
     }
 
-    private fun getFileNameCompressed(context: Context, finalData: Bitmap?, path: String): String? {
-        val currentFileName = getFileNameWithoutExt(path)
-        val newImages = "${currentFileName}_COMP.jpg"
+    private fun getFileNameCompressed(
+        context: Context,
+        finalData: Bitmap?,
+        fileName: String
+    ): String? {
+        val newImages = "$fileName.jpg"
         val dir = getPictureDir(context)
         val fileImage = File(dir, newImages)
         val imagePath = fileImage.path

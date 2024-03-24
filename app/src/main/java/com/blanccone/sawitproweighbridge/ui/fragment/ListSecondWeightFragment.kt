@@ -66,6 +66,9 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
                             }
                         }
                     }
+                    if (tickets.isNotEmpty()) {
+                        setFilterListView()
+                    }
                     updateTickets(tickets)
                 }
 
