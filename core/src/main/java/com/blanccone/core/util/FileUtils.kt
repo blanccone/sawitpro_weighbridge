@@ -8,7 +8,9 @@ import android.media.ExifInterface
 import android.os.Environment
 import com.blanccone.core.R
 import com.blanccone.core.util.Utils.toFormatString
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
@@ -17,20 +19,6 @@ import kotlin.math.roundToInt
 object FileUtils {
 
     val fileSuffix = (Calendar.getInstance().time).toFormatString("yyMMddHHSSS")
-
-    fun bitmapToFile(bm: Bitmap, dir: String?, name: String?): File? {
-        val file = File(dir, name)
-        if (file.exists()) file.delete()
-        try {
-            val fos = FileOutputStream(file)
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, fos)
-            fos.flush()
-            fos.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return file
-    }
 
     fun getPictureDir(context: Context): File? {
         val dir = context.getExternalFilesDir(
@@ -190,5 +178,53 @@ object FileUtils {
         }
         finalData!!.recycle()
         return fileImage.absolutePath
+    }
+
+    fun fileToByteArray(file: File): ByteArray? {
+        var inputStream: FileInputStream? = null
+        var byteArrayOutputStream: ByteArrayOutputStream? = null
+        try {
+            inputStream = FileInputStream(file)
+            byteArrayOutputStream = ByteArrayOutputStream()
+
+            val buffer = ByteArray(1024)
+            var length: Int
+            while (inputStream.read(buffer).also { length = it } != -1) {
+                byteArrayOutputStream.write(buffer, 0, length)
+            }
+            return byteArrayOutputStream.toByteArray()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            try {
+                byteArrayOutputStream?.close()
+                inputStream?.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return null
+    }
+
+    fun byteArrayToFile(context: Context, byteArray: ByteArray, fileName: String): File {
+        return bitmapToFile(
+            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size),
+            getPictureDir(context),
+            fileName
+        )
+    }
+
+    fun bitmapToFile(bm: Bitmap, dir: File?, fileName: String): File {
+        val file = File(dir, fileName)
+        if (file.exists()) file.delete()
+        try {
+            val fos = FileOutputStream(file)
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return file
     }
 }

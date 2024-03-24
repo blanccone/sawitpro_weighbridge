@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 rootProject.name = "SawitPro Weighbridge"
 include(":app")
 include(":core")
+include(":persistence")
