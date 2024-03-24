@@ -8,7 +8,7 @@ import com.blanccone.core.util.Utils.generateUniqueId
 @Entity(tableName = "tb_ticket")
 internal data class TicketEntity(
     @PrimaryKey
-    var id: String? = "",
+    var id: String,
     val licenseNumber: String? = "",
     val driverName: String? = "",
     val weight: Int? = 0,
@@ -18,7 +18,7 @@ internal data class TicketEntity(
     companion object {
         fun setEntity(ticket: Ticket): TicketEntity {
             return TicketEntity(
-                id = ticket.id,
+                id = "${ticket.id}",
                 licenseNumber = ticket.licenseNumber,
                 driverName = ticket.driverName,
                 weight = ticket.weight,

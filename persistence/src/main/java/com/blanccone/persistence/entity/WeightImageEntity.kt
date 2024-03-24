@@ -8,7 +8,7 @@ import com.blanccone.core.model.local.WeightImage
 @Entity(tableName = "tb_weight_image")
 internal data class WeightImageEntity(
     @PrimaryKey
-    var id: String? = "",
+    var id: String,
     var ticketId: String? = "",
     var image: ByteArray,
     var imageName: String? = "",
@@ -17,7 +17,7 @@ internal data class WeightImageEntity(
     companion object {
         fun setEntity(image: WeightImage): WeightImageEntity {
             return WeightImageEntity(
-                id = image.id,
+                id = "${image.id}",
                 ticketId = image.ticketId,
                 image = image.image,
                 imageName = image.imageName,

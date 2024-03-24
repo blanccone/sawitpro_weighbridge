@@ -117,3 +117,11 @@ Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/ListTicketView
 Kapp/src/main/java/com/blanccone/sawitproweighbridge/di/ApplicationModule.kt,0/2/026779d715ea838e8ae7d4545807411ec6c80185
 r
 Bpersistence/src/main/java/com/blanccone/persistence/AppDatabase.kt,9/2/926cf2a19792af24b50449c78aa87e61f171a9dd
+x
+Hcore/src/main/java/com/blanccone/core/service/util/NetworkBoundSource.kt,9/4/944ec59f94e6c8e00787b0c53f1f37d6ba8ad107
+r
+Bcore/src/main/java/com/blanccone/core/service/util/NetworkUtils.kt,3/0/306a52cd1c9409258334bfb78554c9950039e48f
+y
+Icore/src/main/java/com/blanccone/core/service/util/DatabaseBoundSource.kt,c/d/cd633012b16fbaee5277bcf9cc0afe9a0eb6b3c0
+m
+=core/src/main/java/com/blanccone/core/di/ApplicationModule.kt,8/4/843804df04c15af2c68a3528ffafa31bc00f4700

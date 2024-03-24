@@ -1,6 +1,5 @@
 package com.technicaltest.core.service.util
 
-import retrofit2.HttpException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -12,10 +11,11 @@ object NetworkUtils {
         return when (this) {
             is UnknownHostException,
             is SocketException -> "Pastikan Anda Memiliki Koneksi Internet dan Coba Lagi"
+
             is SocketTimeoutException -> "Koneksi Timeout. Coba Lagi"
-            is HttpException -> getErrorMessage(this.code())
-            is SSLPeerUnverifiedException, -> "Sertifikat Keamanan tidak valid. " +
+            is SSLPeerUnverifiedException -> "Sertifikat Keamanan tidak valid. " +
                     "Anda tidak diperkenankan masuk ke dalam aplikasi."
+
             else -> this.message.toString()
         }
     }
@@ -30,8 +30,8 @@ object NetworkUtils {
         }
     }
 
-    fun Exception.codeException():Int {
-        return when(this){
+    fun Exception.codeException(): Int {
+        return when (this) {
             is SSLPeerUnverifiedException -> 603
             else -> 500
         }

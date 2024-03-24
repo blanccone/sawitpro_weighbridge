@@ -48,7 +48,7 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
             })
 
             fabAddTicket.setOnClickListener {
-                EFormWeighmentActivity.newInstance(this@ListTicketActivity)
+                EFormWeighmentActivity.newInstance(this@ListTicketActivity, "FIRST")
             }
         }
     }

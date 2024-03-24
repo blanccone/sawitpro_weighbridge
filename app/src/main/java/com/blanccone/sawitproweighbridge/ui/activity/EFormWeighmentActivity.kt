@@ -22,8 +22,11 @@ import com.blanccone.core.util.Utils.getCurrentDateTime
 import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,10 +37,11 @@ import javax.inject.Inject
 class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     @Inject
-    private lateinit var firebaseDb: DatabaseReference
+    internal lateinit var firebaseDb: DatabaseReference
     @Inject
-    private lateinit var storageDb: StorageReference
+    internal lateinit var storageDb: StorageReference
 
+    private var isFirstEntry = false
     private val currentDateTime = getCurrentDateTime("ddMMyyyyHHmmssSS")
 
     private var filePath: String? = null
@@ -61,6 +65,19 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         super.onCreate(savedInstanceState)
         setView()
         setEvent()
+        fetchDataFromFirebase()
+    }
+
+    private fun fetchDataFromFirebase() {
+        firebaseDb
+            .child("tickets")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    isFirstEntry = snapshot.exists()
+                }
+
+                override fun onCancelled(error: DatabaseError) { }
+            })
     }
 
     private fun setView() {
@@ -68,7 +85,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             etWaktuTimbang.setText(
                 currentDateTime.reformatDate(
                 "ddMMyyyyHHmmssSS",
-                "dd/MM/yyyy, HH:mm:ss"
+                "dd/MM/yyyy HH:mm:ss"
                 )
             )
             iuvImageBeratMuatanFirst.apply {
@@ -168,15 +185,17 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     }
 
     private fun saveData(ticket: Map<String, Any?>) {
-        firebaseDb
-            .child(firebaseDb.push().key ?: "")
-            .setValue(ticket)
-            .addOnSuccessListener {
-                saveImage("${ticket["id"]}")
-            }
-            .addOnFailureListener {
-                toast("Gagal menyimpan data")
-            }
+        val task = if (!isFirstEntry) {
+            firebaseDb.push().setValue(ticket)
+        } else {
+            firebaseDb.setValue(ticket)
+        }
+
+        task.addOnSuccessListener {
+            saveImage("${ticket["id"]}")
+        }.addOnFailureListener {
+            toast("Gagal menyimpan data")
+        }
     }
 
     private fun saveImage(ticketId: String) {
@@ -243,7 +262,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
         fun newInstance(
             context: Context,
-            status: String
+            status: String,
+            isFirstEntry: Boolean = false
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
             ticketStatus = status
