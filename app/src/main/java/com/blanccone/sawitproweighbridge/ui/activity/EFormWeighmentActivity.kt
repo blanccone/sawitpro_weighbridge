@@ -262,8 +262,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
         fun newInstance(
             context: Context,
-            status: String,
-            isFirstEntry: Boolean = false
+            status: String
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
             ticketStatus = status
