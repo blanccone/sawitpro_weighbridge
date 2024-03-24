@@ -8,12 +8,9 @@ import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.sawitproweighbridge.databinding.ActivityHomeBinding
 import com.blanccone.sawitproweighbridge.ui.HomeMenuAdapter
 import com.blanccone.sawitproweighbridge.util.Const
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
 class HomeActivity: CoreActivity<ActivityHomeBinding>() {
 
-    private lateinit var firebaseDb: DatabaseReference
 
     private val homeMenuAdapter by lazy { HomeMenuAdapter() }
 
@@ -23,7 +20,6 @@ class HomeActivity: CoreActivity<ActivityHomeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firebaseDb = FirebaseDatabase.getInstance().reference
         setMenu()
         setEvent()
     }

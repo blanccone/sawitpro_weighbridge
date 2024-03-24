@@ -26,11 +26,16 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
+    @Inject
     private lateinit var firebaseDb: DatabaseReference
+    @Inject
     private lateinit var storageDb: StorageReference
 
     private val currentDateTime = getCurrentDateTime("ddMMyyyyHHmmssSS")
@@ -54,8 +59,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firebaseDb = FirebaseDatabase.getInstance().getReference("tickets")
-        storageDb = FirebaseStorage.getInstance().getReference("tickets")
         setView()
         setEvent()
     }

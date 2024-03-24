@@ -1,10 +1,12 @@
 package com.blanccone.persistence
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.model.local.WeightImage
 import com.blanccone.persistence.entity.TicketEntity
@@ -26,4 +28,7 @@ internal interface AppDao {
     @Transaction
     @Query("SELECT * FROM tb_weight_image")
     suspend fun getImages(): List<WeightImage>
+
+    @Update
+    suspend fun updateTicket(ticket: TicketEntity) : Int
 }

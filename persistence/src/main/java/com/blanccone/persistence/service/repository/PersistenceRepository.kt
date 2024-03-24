@@ -57,4 +57,15 @@ class PersistenceRepository @Inject constructor(
                 return originalData
             }
         }.asFlow().flowOn(Dispatchers.IO)
+
+    fun updateTicket(ticket: Ticket) : Flow<Resource<Int>> =
+        object : DatabaseBoundSource<Int, Int>(QUERY_DELETE) {
+            override suspend fun fetchFromLocal(): Int {
+                return dataSource.updateTicket(ticket)
+            }
+
+            override suspend fun postProcess(originalData: Int): Int {
+                return originalData
+            }
+        }.asFlow().flowOn(Dispatchers.IO)
 }

@@ -103,3 +103,17 @@ cpersistence/src/main/java/com/blanccone/persistence/service/datasource/Persiste
 Opersistence/src/main/java/com/blanccone/persistence/entity/WeightImageEntity.kt,d/8/d8750ac8d0c539fcce9ec32143061023f0193539
 è
 _persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e/b/ebd44b47a66c279845b82439d664c55afe9aded5
+É
+Sapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/StartingActivity.kt,f/f/ff6ce802045ccc9ed0b38b87bd30b4e508af4d02
+á
+Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/SplashScreenActivity.kt,e/8/e8ec50fcdffec7e1e352a3e8ba20ff2d8787dc20
+j
+:app/src/main/java/com/blanccone/sawitproweighbridge/App.kt,d/e/deb0282408f4b1318a31cae3fa37e015380823aa
+á
+Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/ListTicketViewModel.kt,e/c/ec512e06e1c9f2f0285ee31ac7f4a17f2f835530
+ã
+[app/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/EFormWeighmentViewModel.kt,5/9/59a0b5bd91013c014ec4cb6ff0e6d8bf2efc4357
+{
+Kapp/src/main/java/com/blanccone/sawitproweighbridge/di/ApplicationModule.kt,0/2/026779d715ea838e8ae7d4545807411ec6c80185
+r
+Bpersistence/src/main/java/com/blanccone/persistence/AppDatabase.kt,9/2/926cf2a19792af24b50449c78aa87e61f171a9dd
