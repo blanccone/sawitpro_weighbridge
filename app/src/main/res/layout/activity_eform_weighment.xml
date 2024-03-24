@@ -69,7 +69,7 @@
                         android:layout_marginVertical="8dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_vehicle_id"
+                        android:id="@+id/til_no_pol"
                         style="@style/MainTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -78,13 +78,15 @@
                         android:hint="Nomor Kendaraan">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_vehicle_id"
+                            android:id="@+id/et_no_pol"
                             style="@style/MainEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
-                            android:inputType="textPersonName"
+                            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"
                             android:maxLines="1"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -105,7 +107,9 @@
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
+                            android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                             android:inputType="textPersonName"
+                            android:imeOptions="actionDone"
                             android:maxLines="1"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -140,7 +144,7 @@
                         android:layout_marginVertical="8dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_waktu_tiba"
+                        android:id="@+id/til_waktu_timbang"
                         style="@style/MainDropDownTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -148,17 +152,20 @@
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginBottom="8dp"
                         android:hint="Waktu Tiba"
-                        app:endIconDrawable="@drawable/ic_calendar_24">
+                        app:endIconDrawable="@drawable/ic_calendar_24"
+                        app:endIconTint="@color/grey3">
 
                         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                            android:id="@+id/edt_waktu_tiba"
+                            android:id="@+id/et_waktu_timbang"
                             style="@style/MainAutoCompleteTextview"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:inputType="none"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
-                            android:focusable="false"
-                            android:inputType="none" />
+                            app:backgroundTint="@color/grey5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,13 +183,13 @@
                             style="@style/MainEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,-_"
-                            android:enabled="false"
-                            android:inputType="text"
+                            android:digits="1234567890"
+                            android:inputType="number"
+                            android:imeOptions="actionDone"
                             android:maxLength="50"
+                            android:maxLines="1"
                             android:paddingStart="8dp"
-                            android:paddingEnd="0dp"
-                            app:backgroundTint="@color/grey5" />
+                            android:paddingEnd="0dp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -218,7 +225,8 @@
                     <com.blanccone.core.ui.widget.ImageUploaderView
                         android:id="@+id/iuv_image_berat_muatan"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="12dp"/>
 
                 </LinearLayout>
 
@@ -237,7 +245,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_submit"
+            android:id="@+id/btn_simpan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"

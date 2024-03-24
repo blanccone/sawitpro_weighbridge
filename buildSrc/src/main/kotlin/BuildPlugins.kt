@@ -7,4 +7,5 @@ object BuildPlugins {
     const val KSP = "com.google.devtools.ksp"
     const val KAPT = "kotlin-kapt"
     const val DAGGER_HILT = "dagger.hilt.android.plugin"
+    const val GMS = "com.google.gms.google-services"
 }

@@ -6,6 +6,7 @@ plugins {
     id(BuildPlugins.KOTLIN)
     id(BuildPlugins.KAPT)
     id(BuildPlugins.DAGGER_HILT)
+    id(BuildPlugins.GMS)
 }
 
 android {

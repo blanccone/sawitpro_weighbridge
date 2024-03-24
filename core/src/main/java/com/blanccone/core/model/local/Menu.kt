@@ -1,3 +1,3 @@
 package com.blanccone.core.model.local
 
-data class Menu(var id: String, var title: String, var icon: Int)
+data class Menu(val id: String, val title: String, val icon: Int)

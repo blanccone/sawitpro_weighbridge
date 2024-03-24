@@ -54,4 +54,10 @@ object Libs {
         "com.github.chrisbanes:PhotoView:${Versions.PHOTO_VIEW}",
         "com.chensl.rotatephotoview:rotatephotoview:${Versions.ROTATE_PHOTO}"
     )
+
+    val FIREBASE = listOf(
+        "com.google.firebase:firebase-auth:${Versions.FIREBASE_AUTH}",
+        "com.google.firebase:firebase-database:${Versions.FIREBASE_RTDB}",
+        "com.google.firebase:firebase-storage:${Versions.FIREBASE_STORAGE}"
+    )
 }

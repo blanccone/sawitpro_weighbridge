@@ -20,10 +20,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tv_ticket_label"
+            android:id="@+id/tv_tiket_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ticket Id"
+            android:text="Kode Tiket"
             android:textSize="14sp"
             android:layout_marginBottom="16dp"
             android:textColor="@color/white"
@@ -32,7 +32,7 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
-            android:id="@+id/tv_ticket"
+            android:id="@+id/tv_tiket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="TRC132CL"
@@ -41,18 +41,18 @@
             android:textSize="14sp"
             android:textAllCaps="true"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@id/tv_ticket_label"
-            app:layout_constraintTop_toTopOf="@id/tv_ticket_label"
-            app:layout_constraintBottom_toBottomOf="@id/tv_ticket_label" />
+            app:layout_constraintStart_toEndOf="@id/tv_tiket_label"
+            app:layout_constraintTop_toTopOf="@id/tv_tiket_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_tiket_label" />
 
         <ImageView
-            android:id="@+id/iv_weight_icon"
+            android:id="@+id/iv_berat_muatan_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_inbound_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_ticket_label"
-            app:layout_constraintBottom_toBottomOf="@id/tv_ticket_label" />
+            app:layout_constraintTop_toTopOf="@id/tv_tiket_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_tiket_label" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -91,7 +91,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/tv_vehicle_id"
+                android:id="@+id/tv_no_pol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="B1235184KATT"
@@ -104,7 +104,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/iv_vehicle_icon"/>
 
             <TextView
-                android:id="@+id/tv_name_label"
+                android:id="@+id/tv_nama_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nama"
@@ -115,7 +115,7 @@
                 app:layout_constraintTop_toBottomOf="@id/iv_vehicle_icon"/>
 
             <TextView
-                android:id="@+id/tv_weight_label"
+                android:id="@+id/tv_berat_muatan_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Berat (Kg)"
@@ -124,7 +124,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="@id/iv_vehicle_icon"
-                app:layout_constraintTop_toBottomOf="@id/tv_name_label"/>
+                app:layout_constraintTop_toBottomOf="@id/tv_nama_label"/>
 
             <TextView
                 android:id="@+id/tv_status_label"
@@ -136,31 +136,31 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="@id/iv_vehicle_icon"
-                app:layout_constraintTop_toBottomOf="@id/tv_weight_label"
+                app:layout_constraintTop_toBottomOf="@id/tv_berat_muatan_label"
                 app:layout_constraintBottom_toTopOf="@id/csl_btn"/>
 
             <TextView
-                android:id="@+id/tv_name_colon"
+                android:id="@+id/tv_nama_colon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_weight_colon"
-                app:layout_constraintTop_toTopOf="@id/tv_name_label"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name_label" />
+                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan_colon"
+                app:layout_constraintTop_toTopOf="@id/tv_nama_label"
+                app:layout_constraintBottom_toBottomOf="@id/tv_nama_label" />
 
             <TextView
-                android:id="@+id/tv_weight_colon"
+                android:id="@+id/tv_berat_muatan_colon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
                 android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/tv_weight_label"
-                app:layout_constraintTop_toTopOf="@id/tv_weight_label"
-                app:layout_constraintBottom_toBottomOf="@id/tv_weight_label" />
+                app:layout_constraintStart_toEndOf="@id/tv_berat_muatan_label"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_muatan_label"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_muatan_label" />
 
             <TextView
                 android:id="@+id/tv_status_colon"
@@ -169,32 +169,32 @@
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_weight_colon"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan_colon"
                 app:layout_constraintTop_toTopOf="@id/tv_status_label"
                 app:layout_constraintBottom_toBottomOf="@id/tv_status_label" />
 
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_nama"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Yanto Kates"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_weight"
-                app:layout_constraintTop_toTopOf="@id/tv_name_colon"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name_colon" />
+                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan"
+                app:layout_constraintTop_toTopOf="@id/tv_nama_colon"
+                app:layout_constraintBottom_toBottomOf="@id/tv_nama_colon" />
 
             <TextView
-                android:id="@+id/tv_weight"
+                android:id="@+id/tv_berat_muatan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15000"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
                 android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/tv_weight_colon"
-                app:layout_constraintTop_toTopOf="@id/tv_weight_colon"
-                app:layout_constraintBottom_toBottomOf="@id/tv_weight_colon" />
+                app:layout_constraintStart_toEndOf="@id/tv_berat_muatan_colon"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_muatan_colon"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_muatan_colon" />
 
             <TextView
                 android:id="@+id/tv_status"
@@ -203,7 +203,7 @@
                 android:text="Inbound"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_weight"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan"
                 app:layout_constraintTop_toTopOf="@id/tv_status_colon"
                 app:layout_constraintBottom_toBottomOf="@id/tv_status_colon" />
 

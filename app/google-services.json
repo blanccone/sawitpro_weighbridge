@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "221225752689",
+    "firebase_url": "https://sawitpro-weighbridge-d05b5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sawitpro-weighbridge-d05b5",
+    "storage_bucket": "sawitpro-weighbridge-d05b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221225752689:android:087c0ea4d4fba1676aa3d0",
+        "android_client_info": {
+          "package_name": "com.blanccone.sawitproweighbridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlgwi-r58UUOT2-NfWylNO9JWFO6JaQU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

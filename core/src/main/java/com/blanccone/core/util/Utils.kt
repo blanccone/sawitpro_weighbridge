@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -35,7 +36,8 @@ object Utils {
 
     fun getCameraPermissions() = arrayOf(
         Manifest.permission.CAMERA,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.READ_MEDIA_IMAGES
+        else Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
@@ -44,7 +46,10 @@ object Utils {
             !Manifest.permission.CAMERA.isGranted(context) -> return false
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                     !Manifest.permission.READ_MEDIA_IMAGES.isGranted(context) -> return false
-            !Manifest.permission.READ_EXTERNAL_STORAGE.isGranted(context) -> return false
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU &&
+                    !Manifest.permission.READ_EXTERNAL_STORAGE.isGranted(context) -> return false
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU &&
+                    !Manifest.permission.WRITE_EXTERNAL_STORAGE.isGranted(context) -> return false
         }
         return true
     }
@@ -65,15 +70,17 @@ object Utils {
         }
     }
 
-    fun generateUniqueId(inputString: String): Long {
-        // Menggunakan SHA-256 sebagai contoh, bisa diganti dengan algoritma lain jika diinginkan
+    fun generateUniqueId(inputString: String): String {
         val md = MessageDigest.getInstance("SHA-256")
         val hashedBytes = md.digest(inputString.toByteArray())
+        val hashedValue = (java.nio.ByteBuffer.wrap(hashedBytes, 0, 8).long).toString()
+        return "${inputString.substring(0, 3).uppercase()}${hashedValue.substring(hashedValue.length - 4)}"
+    }
 
-        // Mengambil 8 byte pertama dari hasil hash sebagai long
-        val uniqueId = java.nio.ByteBuffer.wrap(hashedBytes, 0, 8).long
-
-        return uniqueId
+    fun getCurrentDateAndTime(inputFormat: String): String {
+        val formatter = SimpleDateFormat(inputFormat, Locale.getDefault())
+        val currentTime = Calendar.getInstance().time
+        return formatter.format(currentTime)
     }
 
     fun Date.toFormatString(format: String, locale: Locale = Locale.getDefault()): String {

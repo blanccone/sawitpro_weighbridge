@@ -31,10 +31,7 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
             addFragment(ListSecondWeightFragment(), "Second Weight")
         }
         with(binding) {
-            vpTicket.apply {
-                adapter = viewPagerAdapter
-                isUserInputEnabled = false
-            }
+            vpTicket.adapter = viewPagerAdapter
 
             TabLayoutMediator(tlTicket, vpTicket) { tab, position ->
                 tab.text = viewPagerAdapter.getTitle(position)
@@ -51,7 +48,7 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
             })
 
             fabAddTicket.setOnClickListener {
-
+                EFormWeighmentActivity.newInstance(this@ListTicketActivity)
             }
         }
     }

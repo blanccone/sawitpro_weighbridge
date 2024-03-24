@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:theme="@style/MainTheme.NoActionBar"
+    android:orientation="vertical" >
+
+    <View
+        android:id="@+id/viewTab"
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:background="@color/grey4"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tvTitleUrutan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Urutkan Berdasarkan"
+                android:textColor="@color/black" />
+
+            <RadioGroup
+                android:id="@+id/rg_urutan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" >
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_terlama"
+                    android:layoutDirection="rtl"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Terlama"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvTitleUrutan"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTitleUrutan" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_terbaru"
+                    android:layoutDirection="rtl"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Terbaru"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvTitleUrutan"
+                    app:layout_constraintTop_toBottomOf="@+id/rb_terbaru" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_sort_az"
+                    android:layoutDirection="rtl"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Nama A-Z"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvTitleUrutan"
+                    app:layout_constraintTop_toBottomOf="@+id/rb_terlama" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_sort_za"
+                    android:layoutDirection="rtl"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Nama Z-A"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvTitleUrutan"
+                    app:layout_constraintTop_toBottomOf="@+id/rb_sort_az" />
+
+            </RadioGroup>
+
+            <View
+                android:id="@+id/view_urutan"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey4"
+                android:layout_marginVertical="8dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_reset"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="@color/color_primary"
+                    app:strokeWidth="2dp"
+                    app:cornerRadius="100dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Reset"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btn_pilih"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_pilih"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    app:cornerRadius="100dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="Terapkan"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="@id/btn_reset"
+                    app:layout_constraintStart_toEndOf="@id/btn_reset"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_reset"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

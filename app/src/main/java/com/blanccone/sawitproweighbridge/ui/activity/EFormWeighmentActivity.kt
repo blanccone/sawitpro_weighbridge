@@ -11,14 +11,26 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
+import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.FileUtils
 import com.blanccone.core.util.Utils
+import com.blanccone.core.util.Utils.generateUniqueId
+import com.blanccone.core.util.Utils.getCurrentDateAndTime
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.io.File
 
 class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
+
+    private lateinit var firebaseDb: DatabaseReference
+    private lateinit var storageDb: StorageReference
 
     private var filePath: String? = null
     private var fileUri: Uri? = null
@@ -39,12 +51,15 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        firebaseDb = FirebaseDatabase.getInstance().reference
+        storageDb = FirebaseStorage.getInstance().reference
         setView()
         setEvent()
     }
 
     private fun setView() {
         with(binding) {
+            etWaktuTimbang.setText(getCurrentDateAndTime("yyyy/MM/dd HH:mm:ss"))
             iuvImageBeratMuatan.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
                 setFieldName(FIELD_NAME)
@@ -58,6 +73,9 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 setOnCameraListener {
                     openCamera()
                 }
+            }
+            btnSimpan.setOnClickListener {
+                setData()
             }
         }
     }
@@ -120,15 +138,54 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
     }
 
+    private fun setData() {
+        with(binding) {
+            val driverName = etNama.text.toString()
+            val licenseNumber = etNoPol.text.toString()
+            val weight = etBeratMuatan.text.toString().toInt()
+            val weightOn = etWaktuTimbang.text.toString()
+            val status = "Inbound"
+            val combString = "$driverName$licenseNumber${getCurrentDateAndTime("ddMMyyyyHHmmssSS")}"
+            val ticket = Ticket(
+                id = generateUniqueId(combString),
+                licenseNumber = licenseNumber,
+                driverName = driverName,
+                weight = weight,
+                weighedOn = weightOn,
+                status = status
+            ).toMap()
+
+            showLoading(true)
+            saveData(ticket)
+        }
+    }
+
+    private fun saveData(ticket: Map<String, Any?>) {
+        firebaseDb
+            .child("tickets")
+            .child("${ticket["id"]}")
+            .setValue(ticket).addOnCompleteListener {
+            if (it.isSuccessful) {
+                saveImage("${ticket["id"]}")
+            }
+        }
+    }
+
+    private fun saveImage(ticketId: String) {
+        storageDb
+            .child(ticketId)
+            .putFile(fileUri!!).addOnCompleteListener {
+            toast("Data berhasil tersimpan")
+            finish()
+        }
+    }
+
     private fun getPermissionResult() {
         if (Utils.isAllowModifiedStorageAndCamera(this)) {
             openCamera()
+            toast("Open Camera")
         } else {
-            Toast.makeText(
-                this,
-                "Mohon aktifkan izin Camera, Gallery dan File Manager",
-                Toast.LENGTH_SHORT
-            ).show()
+            toast("Mohon aktifkan izin Camera")
         }
     }
 
@@ -136,8 +193,16 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            LoadingDialog.showDialog(supportFragmentManager)
+        } else {
+            LoadingDialog.dismissDialog(supportFragmentManager)
+        }
+    }
+
     companion object {
-        private const val FIELD_NAME = "FOTO_BERAT_MUATAN"
+        private const val FIELD_NAME = "BERAT_MUATAN"
         private var isSecondWeight = false
 
         fun newInstance(

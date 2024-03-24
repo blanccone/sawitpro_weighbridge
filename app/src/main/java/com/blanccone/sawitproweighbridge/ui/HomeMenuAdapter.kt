@@ -27,7 +27,10 @@ class HomeMenuAdapter: RecyclerView.Adapter<HomeMenuAdapter.ViewHolder>() {
             tvTitle.text = menu.title
             ivIcon.background = ContextCompat.getDrawable(root.context, menu.icon)
 
-            root.setOnClickListener {
+            ivIcon.setOnClickListener {
+                onItemClickListener?.let { it(menu.id) }
+            }
+            ivBackground.setOnClickListener {
                 onItemClickListener?.let { it(menu.id) }
             }
         }

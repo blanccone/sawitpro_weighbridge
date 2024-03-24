@@ -3,6 +3,7 @@ import extensions.api
 plugins {
     id("commons.android-library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -21,9 +22,7 @@ dependencies {
     api(Libs.COROUTINES)
     api(Libs.GLIDE)
     api(Libs.PHOTO_LIBS)
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    api(Libs.FIREBASE)
 
     kapt(Libs.GLIDE_COMPILER)
 }

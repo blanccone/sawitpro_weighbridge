@@ -139,7 +139,7 @@ class ImageViewerActivity: CoreActivity<ActivityImageViewerBinding>() {
         } else {
             Toast.makeText(
                 this,
-                "Mohon aktifkan izin Camera, Gallery dan File Manager",
+                "Mohon aktifkan izin Camera",
                 Toast.LENGTH_SHORT
             ).show()
         }

@@ -45,4 +45,9 @@ object Versions {
     const val GLIDE = "4.13.1"
     const val PHOTO_VIEW = "2.3.0"
     const val ROTATE_PHOTO= "1.0.5"
+
+    // Firebase
+    const val FIREBASE_AUTH = "22.3.1"
+    const val FIREBASE_RTDB = "20.3.1"
+    const val FIREBASE_STORAGE = "20.3.0"
 }

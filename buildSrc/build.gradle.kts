@@ -12,10 +12,12 @@ object PluginVersions {
     const val ANDROID_GRADLE = "8.1.1"
     const val KOTLIN = "1.8.10"
     const val DAGGER_HILT = "2.44"
+    const val GMS = "4.4.1"
 }
 
 dependencies {
     implementation("com.android.tools.build:gradle:${PluginVersions.ANDROID_GRADLE}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${PluginVersions.KOTLIN}")
     implementation("com.google.dagger:hilt-android-gradle-plugin:${PluginVersions.DAGGER_HILT}")
+    implementation("com.google.gms:google-services:${PluginVersions.GMS}")
 }
