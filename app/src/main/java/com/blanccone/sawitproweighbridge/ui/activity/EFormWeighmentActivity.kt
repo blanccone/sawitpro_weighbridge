@@ -185,17 +185,14 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     }
 
     private fun saveData(ticket: Map<String, Any?>) {
-        val task = if (!isFirstEntry) {
-            firebaseDb.push().setValue(ticket)
-        } else {
-            firebaseDb.setValue(ticket)
-        }
-
-        task.addOnSuccessListener {
-            saveImage("${ticket["id"]}")
-        }.addOnFailureListener {
-            toast("Gagal menyimpan data")
-        }
+        firebaseDb
+            .push()
+            .setValue(ticket)
+            .addOnSuccessListener {
+                saveImage("${ticket["id"]}")
+            }.addOnFailureListener {
+                toast("Gagal menyimpan data")
+            }
     }
 
     private fun saveImage(ticketId: String) {

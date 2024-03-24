@@ -125,3 +125,5 @@ y
 Icore/src/main/java/com/blanccone/core/service/util/DatabaseBoundSource.kt,c/d/cd633012b16fbaee5277bcf9cc0afe9a0eb6b3c0
 m
 =core/src/main/java/com/blanccone/core/di/ApplicationModule.kt,8/4/843804df04c15af2c68a3528ffafa31bc00f4700
+q
+Acore/src/main/java/com/blanccone/core/ui/fragment/CoreFragment.kt,0/6/069dd3a7818316898336307b144c5de95cc4a061
