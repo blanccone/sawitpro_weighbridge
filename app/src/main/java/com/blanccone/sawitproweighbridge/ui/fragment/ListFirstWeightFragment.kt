@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.blanccone.core.model.local.Ticket
@@ -18,6 +17,7 @@ import com.blanccone.core.ui.widget.FilterBottomSheet.Companion.URUTKAN_TERBARU
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.toast
+import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
@@ -68,9 +68,7 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setTicketListView()
-        setFilterListView()
         setEvent()
         setObserves()
         fetchFromFirebase()
@@ -111,7 +109,10 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
                         }
                     }
                 }
-                binding.rvFilter.isVisible = tickets.isNotEmpty()
+                if (tickets.isNotEmpty()) {
+                    binding.rvFilter.show()
+                    setFilterListView()
+                }
                 updateTicketsToLocal(tickets)
             }
 
@@ -148,14 +149,12 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
     }
 
     private fun setEvent() {
-        with(binding) {
-            with(layoutSearch) {
-                etSearch.doAfterTextChanged {
-                    searchData(it.toString())
-                }
-                btnFilter.setOnClickListener {
-                    showFilterBottomSheet()
-                }
+        with(binding.layoutSearch) {
+            etSearch.doAfterTextChanged {
+                searchData(it.toString())
+            }
+            btnFilter.setOnClickListener {
+                showFilterBottomSheet()
             }
         }
         ticketAdapter.setOnItemClickListener {
@@ -184,7 +183,7 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
             .push()
             .setValue(ticket.toMap())
             .addOnSuccessListener {
-                viewModel.getimages("${ticket.id}")
+//                viewModel.getimages("${ticket.id}")
             }
             .addOnFailureListener {
                 showLoading(false)

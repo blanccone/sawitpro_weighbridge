@@ -19,15 +19,15 @@ object Versions {
     const val OKHTPP = "4.9.0"
 
     // Lifecycle Dependencies Version
-    const val LIFECYCLE = "2.2.0"
+    const val LIFECYCLE = "2.5.0"
     const val LIVEEVENT = "1.2.0"
 
     // Coroutines Dependencies Version
     const val COROUTINES = "1.6.4"
 
     // Activity KTX for View Models Dependencies Version
-    const val ACTIVITY_KTX = "1.1.0"
-    const val FRAGMENT_KTX = "1.3.2"
+    const val ACTIVITY_KTX = "1.5.0"
+    const val FRAGMENT_KTX = "1.5.0"
 
     // Dagger - Hilt Version
     const val DAGGER_HILT = "2.48"

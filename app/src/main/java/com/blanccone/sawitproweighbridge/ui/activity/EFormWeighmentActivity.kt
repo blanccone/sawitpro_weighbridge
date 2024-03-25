@@ -109,12 +109,20 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
         }
 
+        viewModel.error.observe(this) {
+            toast(it.toString())
+        }
+
         viewModel.images.observe(this) {
             setImagesFromLocal(it)
         }
 
         viewModel.insertTicketSuccessful.observe(this) {
             if (!it.isNullOrEmpty()) saveImage(it)
+        }
+
+        viewModel.insertImageSuccessful.observe(this) {
+            if (it) { finish() }
         }
     }
 
@@ -400,10 +408,11 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             val driverName = etNama.text.toString()
             val licenseNumber = etNoPol.text.toString()
             val firstWeight = etBeratMuatanPertama.text.toString().toInt()
-            val secondWeight = etBeratMuatanKedua.text.toString().toInt()
+            val secondWeight = if (ticketStatus != FIRST_WEIGHT)
+                etBeratMuatanKedua.text.toString().toInt() else 0
             val firstWeightOn = etWaktuTimbangPertama.text.toString()
             val secondWeightOn = etWaktuTimbangKedua.text.toString()
-            val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
+            val status = if (ticketStatus != FIRST_WEIGHT) "Outbound" else "Inbound"
             val combString = "$driverName$licenseNumber$currentDateTime"
             val ticket = Ticket(
                 id = generateUniqueId(combString),

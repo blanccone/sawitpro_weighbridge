@@ -15,6 +15,7 @@ import com.blanccone.sawitproweighbridge.ui.fragment.ListSecondWeightFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
 
     override fun inflateLayout(inflater: LayoutInflater): ActivityListTicketBinding {
@@ -56,7 +57,10 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
             })
 
             fabAddTicket.setOnClickListener {
-                EFormWeighmentActivity.newInstance(this@ListTicketActivity, "FIRST")
+                EFormWeighmentActivity.newInstance(
+                    this@ListTicketActivity,
+                    EFormWeighmentActivity.FIRST_WEIGHT
+                )
             }
         }
     }

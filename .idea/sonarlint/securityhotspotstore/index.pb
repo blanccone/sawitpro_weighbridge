@@ -119,3 +119,5 @@ g
 7core/src/main/java/com/blanccone/core/util/ViewUtils.kt,9/e/9e5ffc0c938e3fb92a8cf39161c5cb6b1ddde06a
 †
 Vapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/WeighmentViewModel.kt,2/b/2bc96a5ed2034ab4be554c4f7bf7c5283a3be8b3
+Š
+Zapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/ListWeighmentViewModel.kt,c/1/c1d9ad6f5c53d0b935af516a67f06ee17dd318ee

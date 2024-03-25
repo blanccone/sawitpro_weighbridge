@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.adapter.FilterChipAdapter
@@ -16,6 +14,7 @@ import com.blanccone.core.ui.widget.FilterBottomSheet
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.toast
+import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
@@ -65,7 +64,6 @@ class ListSecondWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setTicketListView()
-        setFilterListView()
         setEvent()
         setObserves()
         fetchFromFirebase()
@@ -106,7 +104,10 @@ class ListSecondWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>(
                         }
                     }
                 }
-                binding.rvFilter.isVisible = tickets.isNotEmpty()
+                if (tickets.isNotEmpty()) {
+                    binding.rvFilter.show()
+                    setFilterListView()
+                }
                 updateTicketsToLocal(tickets)
             }
 
