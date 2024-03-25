@@ -11,8 +11,10 @@ internal data class TicketEntity(
     var id: String,
     val licenseNumber: String? = "",
     val driverName: String? = "",
-    val weight: Int? = 0,
-    val weighedOn: String? = "",
+    val firstWeight: Int? = 0,
+    val secondWeight: Int? = 0,
+    val firstWeighedOn: String? = "",
+    val secondWeighedOn: String? = "",
     val status: String? = ""
 ) {
     companion object {
@@ -21,8 +23,10 @@ internal data class TicketEntity(
                 id = "${ticket.id}",
                 licenseNumber = ticket.licenseNumber,
                 driverName = ticket.driverName,
-                weight = ticket.weight,
-                weighedOn = ticket.weighedOn,
+                firstWeight = ticket.firstWeight,
+                secondWeight = ticket.secondWeight,
+                firstWeighedOn = ticket.firstWeighedOn,
+                secondWeighedOn = ticket.secondWeighedOn,
                 status = ticket.status
             )
         }
@@ -34,8 +38,10 @@ internal data class TicketEntity(
                     id = "${ticket.id}",
                     licenseNumber = ticket.licenseNumber,
                     driverName = ticket.driverName,
-                    weight = ticket.weight,
-                    weighedOn = ticket.weighedOn,
+                    firstWeight = ticket.firstWeight,
+                    secondWeight = ticket.secondWeight,
+                    firstWeighedOn = ticket.firstWeighedOn,
+                    secondWeighedOn = ticket.secondWeighedOn,
                     status = ticket.status
                 )
                 dataList.add(data)
@@ -48,8 +54,10 @@ internal data class TicketEntity(
         id,
         licenseNumber,
         driverName,
-        weight,
-        weighedOn,
+        firstWeight,
+        secondWeight,
+        firstWeighedOn,
+        secondWeighedOn,
         status
     )
 }

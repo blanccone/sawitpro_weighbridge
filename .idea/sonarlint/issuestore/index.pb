@@ -123,3 +123,5 @@ t
 Dcore/src/main/java/com/blanccone/core/ui/adapter/ViewPagerAdapter.kt,6/a/6ad6d5e2a002ef83ead6de323c5c65f35819581e
 g
 7core/src/main/java/com/blanccone/core/util/ViewUtils.kt,9/e/9e5ffc0c938e3fb92a8cf39161c5cb6b1ddde06a
+†
+Vapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/WeighmentViewModel.kt,2/b/2bc96a5ed2034ab4be554c4f7bf7c5283a3be8b3
