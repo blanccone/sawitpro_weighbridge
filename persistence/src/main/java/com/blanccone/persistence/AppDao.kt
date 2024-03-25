@@ -1,7 +1,6 @@
 package com.blanccone.persistence
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -29,9 +28,12 @@ internal interface AppDao {
     suspend fun insertImage(image: WeightImageEntity): Long
 
     @Transaction
-    @Query("SELECT * FROM tb_weight_image")
-    suspend fun getImages(): List<WeightImage>
+    @Query("SELECT * FROM tb_weight_image WHERE ticketId == :ticketId")
+    suspend fun getImages(ticketId: String): List<WeightImage>
 
     @Update
     suspend fun updateTicket(ticket: TicketEntity) : Int
+
+    @Update
+    suspend fun updateImage(image: WeightImageEntity) : Int
 }

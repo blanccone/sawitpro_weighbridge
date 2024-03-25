@@ -33,13 +33,19 @@ class PersistenceDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun getImages(): List<WeightImage> {
-        return appDatabase.appDao().getImages()
+    override suspend fun getImages(ticketId: String): List<WeightImage> {
+        return appDatabase.appDao().getImages(ticketId)
     }
 
     override suspend fun updateTicket(ticket: Ticket): Int {
         return appDatabase.appDao().updateTicket(
             TicketEntity.setEntity(ticket)
+        )
+    }
+
+    override suspend fun updateImage(image: WeightImage): Int {
+        return appDatabase.appDao().updateImage(
+            WeightImageEntity.setEntity(image)
         )
     }
 }

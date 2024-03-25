@@ -10,9 +10,9 @@ internal data class WeightImageEntity(
     @PrimaryKey
     var id: String,
     var ticketId: String? = "",
-    var image: ByteArray,
+    var image: ByteArray? = null,
     var imageName: String? = "",
-    var imagePath: String? = ""
+    var imagePath: String? = "",
 ) {
     companion object {
         fun setEntity(image: WeightImage): WeightImageEntity {
@@ -21,7 +21,7 @@ internal data class WeightImageEntity(
                 ticketId = image.ticketId,
                 image = image.image,
                 imageName = image.imageName,
-                imagePath = image.imagePath
+                imagePath = image.imagePath,
             )
         }
     }

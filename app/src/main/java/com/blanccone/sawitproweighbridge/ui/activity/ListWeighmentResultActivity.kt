@@ -4,37 +4,42 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.widget.FilterBottomSheet
+import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
+import com.blanccone.core.util.Utils.toast
 import com.blanccone.sawitproweighbridge.databinding.ActivityListWeighmentResultBinding
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
-import com.blanccone.sawitproweighbridge.ui.viewmodel.ListTicketViewModel
+import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBinding>() {
 
-    private val viewModel: ListTicketViewModel by viewModels()
+    private val viewModel: WeighmentViewModel by viewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }
 
-    private lateinit var firebaseDb: DatabaseReference
+    @Inject
+    internal lateinit var firebaseDb: DatabaseReference
 
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
@@ -53,6 +58,11 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
     }
 
     private fun setObserves() {
+        viewModel.isLoading.observe(this) {
+            it?.let { isLoading ->
+                showLoading(isLoading)
+            }
+        }
         viewModel.tickets.observe(this) {
             val dataList = it.filter { ticket ->
                 ticket.status == "Done"
@@ -120,6 +130,15 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
                 }
             }
         }
+        ticketAdapter.setOnItemClickListener {
+            if (it.action == WeighmentTicketAdapter.ACTION_ITEM_CLICK) {
+                EFormWeighmentActivity.newInstance(
+                    context = this,
+                    status = EFormWeighmentActivity.DONE,
+                    data = it.ticket
+                )
+            }
+        }
     }
 
     private fun showFilterBottomSheet() {
@@ -160,14 +179,14 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
             FilterBottomSheet.URUTKAN_NAMA_AZ -> tickets.sortedByDescending { it.driverName }
             FilterBottomSheet.URUTKAN_NAMA_ZA -> tickets.sortedBy { it.driverName }
             FilterBottomSheet.URUTKAN_TERBARU -> tickets.sortedByDescending { ticket ->
-                ticket.weighedOn?.let {
+                ticket.firstWeighedOn?.let {
                     calendar.time = dateFormat.parse(it) ?: Date(0)
                     calendar.time
                 }
             }
 
             else -> tickets.sortedBy { ticket ->
-                ticket.weighedOn?.let {
+                ticket.firstWeighedOn?.let {
                     calendar.time = dateFormat.parse(it) ?: Date(0)
                     calendar.time
                 }
@@ -175,6 +194,14 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         }
         updateFilterList()
         updateTicketList(sortedTickets)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            LoadingDialog.showDialog(supportFragmentManager)
+        } else {
+            LoadingDialog.dismissDialog(supportFragmentManager)
+        }
     }
 
     companion object {

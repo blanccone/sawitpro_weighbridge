@@ -146,19 +146,19 @@
                         android:layout_marginVertical="8dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_waktu_timbang"
+                        android:id="@+id/til_waktu_timbang_pertama"
                         style="@style/MainDropDownTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginBottom="8dp"
-                        android:hint="Waktu Tiba"
+                        android:hint="Waktu Timbang Pertama"
                         app:endIconDrawable="@drawable/ic_calendar_24"
                         app:endIconTint="@color/grey3">
 
                         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                            android:id="@+id/et_waktu_timbang"
+                            android:id="@+id/et_waktu_timbang_pertama"
                             style="@style/MainAutoCompleteTextview"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -172,16 +172,68 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_berat_muatan"
+                        android:visibility="gone"
+                        android:id="@+id/til_waktu_timbang_kedua"
+                        style="@style/MainDropDownTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Waktu Timbang Kedua"
+                        app:endIconDrawable="@drawable/ic_calendar_24"
+                        app:endIconTint="@color/grey3">
+
+                        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            android:id="@+id/et_waktu_timbang_kedua"
+                            style="@style/MainAutoCompleteTextview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            app:backgroundTint="@color/grey5" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_berat_muatan_pertama"
                         style="@style/MainTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginBottom="8dp"
-                        android:hint="Berat Muatan (Masuk)">
+                        android:hint="Berat Muatan Pertama (Kg)">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_berat_muatan"
+                            android:id="@+id/et_berat_muatan_pertama"
+                            style="@style/MainEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="1234567890"
+                            android:inputType="number"
+                            android:imeOptions="actionDone"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:visibility="gone"
+                        android:id="@+id/til_berat_muatan_kedua"
+                        style="@style/MainTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Berat Muatan Kedua (Kg)">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_berat_muatan_kedua"
                             style="@style/MainEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

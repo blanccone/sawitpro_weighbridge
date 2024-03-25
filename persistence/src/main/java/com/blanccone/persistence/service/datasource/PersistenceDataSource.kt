@@ -13,7 +13,9 @@ interface PersistenceDataSource {
 
     suspend fun insertImage(image: WeightImage): Long
 
-    suspend fun getImages(): List<WeightImage>
+    suspend fun getImages(ticketId: String): List<WeightImage>
 
     suspend fun updateTicket(ticket: Ticket): Int
+
+    suspend fun updateImage(image: WeightImage): Int
 }

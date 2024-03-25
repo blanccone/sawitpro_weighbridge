@@ -58,10 +58,10 @@ class PersistenceRepository @Inject constructor(
             }
         }.asFlow().flowOn(Dispatchers.IO)
 
-    fun getImages(): Flow<Resource<List<WeightImage>>> =
+    fun getImages(ticketId: String): Flow<Resource<List<WeightImage>>> =
         object : DatabaseBoundSource<List<WeightImage>, List<WeightImage>>(QUERY_SELECT_MULTIPLE) {
             override suspend fun fetchFromLocal(): List<WeightImage> {
-                return dataSource.getImages()
+                return dataSource.getImages(ticketId)
             }
 
             override suspend fun postProcess(originalData: List<WeightImage>): List<WeightImage> {
@@ -73,6 +73,17 @@ class PersistenceRepository @Inject constructor(
         object : DatabaseBoundSource<Int, Int>(QUERY_DELETE) {
             override suspend fun fetchFromLocal(): Int {
                 return dataSource.updateTicket(ticket)
+            }
+
+            override suspend fun postProcess(originalData: Int): Int {
+                return originalData
+            }
+        }.asFlow().flowOn(Dispatchers.IO)
+
+    fun updateImage(image: WeightImage) : Flow<Resource<Int>> =
+        object : DatabaseBoundSource<Int, Int>(QUERY_DELETE) {
+            override suspend fun fetchFromLocal(): Int {
+                return dataSource.updateImage(image)
             }
 
             override suspend fun postProcess(originalData: Int): Int {

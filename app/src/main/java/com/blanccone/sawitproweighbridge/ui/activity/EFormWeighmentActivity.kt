@@ -18,7 +18,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
+import com.blanccone.core.R
 import com.blanccone.core.model.local.Ticket
+import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.FileUtils
@@ -27,18 +30,15 @@ import com.blanccone.core.util.Utils.generateUniqueId
 import com.blanccone.core.util.Utils.getCurrentDateTime
 import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.core.util.Utils.toast
-import com.blanccone.core.R
 import com.blanccone.core.util.ViewUtils.backgroundTint
+import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
-import com.blanccone.sawitproweighbridge.ui.viewmodel.EFormWeighmentViewModel
+import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -47,17 +47,20 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
-    private val viewModel: EFormWeighmentViewModel by viewModels()
+    private val viewModel: WeighmentViewModel by viewModels()
 
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
+
     @Inject
     internal lateinit var storageDb: StorageReference
 
-    private val currentDateTime = getCurrentDateTime("ddMMyyyyHHmmssSS")
+    private lateinit var currentDateTime: String
 
     private var filePath: String? = null
     private var fileUri: Uri? = null
+    private var fileImage: File? = null
+    private var imageFieldName= ""
 
     private var fields = hashMapOf<TextInputLayout, View>()
 
@@ -87,52 +90,246 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
+        currentDateTime = if (!isEditRequested && ticketStatus != DONE) {
+            getCurrentDateTime("ddMMyyyyHHmmssSS")
+        } else ""
+
+        setFields()
         setView()
         setEvent()
-        fetchFromFirebase()
+        setObserves()
+        fetchData()
+    }
+
+    private fun setObserves() {
+        viewModel.isLoading.observe(this) {
+            it?.let { isLoading ->
+                showLoading(isLoading)
+            }
+        }
+
+        viewModel.images.observe(this) {
+            setImagesFromLocal(it)
+        }
+
+        viewModel.insertTicketSuccessful.observe(this) {
+            if (!it.isNullOrEmpty()) saveImage(it)
+        }
+    }
+
+    private fun fetchData() {
+        if ((ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) && isEditRequested) ||
+            ticketStatus == DONE
+        ) {
+            ticketData?.let {
+                if (!Utils.isConnected(this)) {
+                    fetchFromLocal("${ticketData?.id}")
+                } else {
+                    fetchFromFirebase()
+                }
+            }
+        }
     }
 
     private fun fetchFromFirebase() {
-        firebaseDb.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        storageDb.listAll().addOnSuccessListener { listResult ->
+            val items = listResult.items
+            if (items.isNotEmpty()) {
+                setImagesFromFirebase(items)
+            } else {
+                fetchFromLocal("${ticketData?.id}")
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                if (!Utils.isConnected(this@EFormWeighmentActivity)) {
-                    fetchFromLocal()
-                }
-            }
-        })
+        }
     }
 
-    private fun fetchFromLocal() {
-        viewModel.getimages()
+    private fun fetchFromLocal(ticketId: String) {
+        viewModel.getimages(ticketId)
     }
 
-    private fun setView() {
+    private fun setFields() {
         with(binding) {
             fields = hashMapOf(
                 tilNoPol to etNoPol,
                 tilNama to etNama,
-                tilBeratMuatan to etBeratMuatan
+                tilBeratMuatanPertama to etBeratMuatanPertama
             )
-            etWaktuTimbang.setText(
-                currentDateTime.reformatDate(
-                    "ddMMyyyyHHmmssSS",
-                    "dd/MM/yyyy HH:mm:ss"
-                )
-            )
-            iuvImageBeratMuatanFirst.apply {
-                imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
-                setFieldName(FIELD_NAME)
+            if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
+                fields[tilBeratMuatanKedua] = etBeratMuatanKedua
             }
         }
+    }
+
+    private fun setView() {
+        with(binding) {
+            when {
+                ticketStatus == DONE -> {
+                    setAutoFillDefault()
+                    ticketData?.let {
+                        with(it) {
+                            etBeratMuatanKedua.apply {
+                                show()
+                                setText(secondWeight.toString())
+                            }
+                            etWaktuTimbangKedua.apply {
+                                show()
+                                setText(secondWeighedOn)
+                            }
+                            iuvImageBeratMuatanFirst.isPreviewOnly = true
+                            iuvImageBeratMuatanSecond.apply {
+                                show()
+                                isPreviewOnly = true
+                            }
+                            disableView()
+                        }
+                    }
+                }
+
+                isEditRequested && ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) -> {
+                    setAutoFillDefault()
+                    ticketData?.let {
+                        with(it) {
+                            etBeratMuatanKedua.apply {
+                                isVisible = ticketStatus == SECOND_WEIGHT
+                                setText(secondWeight.toString())
+                            }
+                            etWaktuTimbangKedua.apply {
+                                isVisible = ticketStatus == SECOND_WEIGHT
+                                setText(secondWeighedOn)
+                            }
+                            iuvImageBeratMuatanSecond.isVisible = ticketStatus == SECOND_WEIGHT
+                        }
+                    }
+                }
+
+                ticketStatus == SECOND_WEIGHT -> {
+                    setAutoFillDefault()
+                    etWaktuTimbangKedua.apply {
+                        show()
+                        setText(
+                            currentDateTime.reformatDate(
+                                "ddMMyyyyHHmmssSS",
+                                "dd/MM/yyyy HH:mm:ss"
+                            )
+                        )
+                    }
+                    iuvImageBeratMuatanFirst.isPreviewOnly = true
+                    iuvImageBeratMuatanSecond.show()
+                }
+
+                else -> etWaktuTimbangPertama.setText(
+                    currentDateTime.reformatDate(
+                        "ddMMyyyyHHmmssSS",
+                        "dd/MM/yyyy HH:mm:ss"
+                    )
+                )
+            }
+            iuvImageBeratMuatanFirst.apply {
+                imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
+                setFieldName("${getCurrentDateTime("ddMMyyyyHH")}_$FIRST_PHOTO")
+            }
+            iuvImageBeratMuatanSecond.apply {
+                imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
+                setFieldName("${getCurrentDateTime("ddMMyyyyHH")}_$SECOND_PHOTO")
+            }
+        }
+    }
+
+    private fun setAutoFillDefault() {
+        with(binding) {
+            ticketData?.let {
+                with(it) {
+                    etNoPol.setText(licenseNumber)
+                    etNama.setText(driverName)
+                    etBeratMuatanPertama.setText(firstWeight.toString())
+                    etWaktuTimbangPertama.setText(firstWeighedOn)
+                }
+            }
+        }
+    }
+
+    private fun setImagesFromFirebase(images: List<StorageReference>) {
+        when {
+            ticketStatus == DONE && images.size > 1 -> {
+                images[0].downloadUrl.addOnSuccessListener {
+                    binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                }
+                images[1].downloadUrl.addOnSuccessListener {
+                    binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+                }
+            }
+
+            isEditRequested && ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) -> {
+                if (images.size > 1) {
+                    images[0].downloadUrl.addOnSuccessListener {
+                        binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                    }
+                    images[1].downloadUrl.addOnSuccessListener {
+                        binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+                    }
+                } else {
+                    images[0].downloadUrl.addOnSuccessListener {
+                        binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                    }
+                }
+            }
+
+            ticketStatus == SECOND_WEIGHT -> images[1].downloadUrl.addOnSuccessListener {
+                binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+            }
+        }
+    }
+
+    private fun setImagesFromLocal(images: List<WeightImage>) {
+        when {
+            ticketStatus == DONE && images.size > 1 -> {
+                setFirstImage(images[0])
+                setSecondImage(images[1])
+            }
+
+            isEditRequested && ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) -> {
+                if (images.size > 1) {
+                    setFirstImage(images[0])
+                    setSecondImage(images[1])
+                } else {
+                    setFirstImage(images[0])
+                }
+            }
+
+            ticketStatus == SECOND_WEIGHT -> setSecondImage(images[1])
+        }
+    }
+
+    private fun setFirstImage(image: WeightImage) {
+        var firstImagePath = image.imagePath
+        if (firstImagePath.isNullOrEmpty()) {
+            val file = FileUtils.byteArrayToFile(
+                context = this@EFormWeighmentActivity,
+                byteArray = image.image!!,
+                fileName = "${ticketData?.id}"
+            )
+            firstImagePath = file.absolutePath
+        }
+        binding.iuvImageBeratMuatanFirst.setFilePath(firstImagePath)
+    }
+
+    private fun setSecondImage(image: WeightImage) {
+        var secondImagePath = image.imagePath
+        if (secondImagePath.isNullOrEmpty()) {
+            val file = FileUtils.byteArrayToFile(
+                context = this@EFormWeighmentActivity,
+                byteArray = image.image!!,
+                fileName = "${ticketData?.id}"
+            )
+            secondImagePath = file.absolutePath
+        }
+        binding.iuvImageBeratMuatanSecond.setFilePath(secondImagePath)
     }
 
     private fun setEvent() {
         with(binding) {
             iuvImageBeratMuatanFirst.apply {
                 setOnCameraListener {
+                    imageFieldName = it
                     openCamera()
                 }
                 setOnDeleteListener {
@@ -142,6 +339,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
             iuvImageBeratMuatanFirst.apply {
                 setOnCameraListener {
+                    imageFieldName = it
                     openCamera()
                 }
                 setOnDeleteListener {
@@ -150,7 +348,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 }
             }
             btnSimpan.setOnClickListener {
-                setData()
+                if (isDataValid()) saveData()
             }
         }
     }
@@ -161,7 +359,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             return
         }
         try {
-            val fileName = FileUtils.getFileNameTemplate(FIELD_NAME, "jpg")
+            val fileName = FileUtils.getFileNameTemplate(imageFieldName, "jpg")
             val dir = FileUtils.getPictureDir(this)
             val file = File(dir, fileName)
 
@@ -196,52 +394,40 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
     }
 
-    private fun setData() {
+    private fun saveData() {
         with(binding) {
             val driverName = etNama.text.toString()
             val licenseNumber = etNoPol.text.toString()
-            val weight = etBeratMuatan.text.toString().toInt()
-            val weightOn = etWaktuTimbang.text.toString()
-            val status = "Inbound"
+            val firstWeight = etBeratMuatanPertama.text.toString().toInt()
+            val secondWeight = etBeratMuatanKedua.text.toString().toInt()
+            val firstWeightOn = etWaktuTimbangPertama.text.toString()
+            val secondWeightOn = etWaktuTimbangKedua.text.toString()
+            val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
             val combString = "$driverName$licenseNumber$currentDateTime"
             val ticket = Ticket(
                 id = generateUniqueId(combString),
                 licenseNumber = licenseNumber,
                 driverName = driverName,
-                weight = weight,
-                weighedOn = weightOn,
+                firstWeight = firstWeight,
+                firstWeighedOn = firstWeightOn,
+                secondWeight = secondWeight,
+                secondWeighedOn = secondWeightOn,
                 status = status
-            ).toMap()
-
-            showLoading(true)
-            saveData(ticket)
+            )
+            viewModel.insertTicket(ticket)
         }
-    }
-
-    private fun saveData(ticket: Map<String, Any?>) {
-        firebaseDb
-            .push()
-            .setValue(ticket)
-            .addOnSuccessListener {
-                saveImage("${ticket["id"]}")
-            }.addOnFailureListener {
-                toast("Gagal menyimpan data")
-            }
     }
 
     private fun saveImage(ticketId: String) {
         if (isImageReady(ticketId)) {
-            storageDb
-                .child(ticketId)
-                .putFile(fileUri!!)
-                .addOnSuccessListener {
-                    toast("Data berhasil tersimpan")
-                    showLoading(false)
-                    finish()
-                }
-                .addOnFailureListener {
-                    toast("Gagal menyimpan data")
-                }
+            val image = WeightImage(
+                id = generateUniqueId(ticketId),
+                ticketId = ticketId,
+                image = FileUtils.fileToByteArray(fileImage!!),
+                imageName = FileUtils.getFileName(filePath!!),
+                imagePath = filePath
+            )
+            viewModel.insertImage(image)
         }
     }
 
@@ -258,7 +444,9 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 toast("ukuran file maksimal 1 MB")
                 isReady = false
             } else {
-                fileUri = File(filePathData).toUri()
+                filePath = filePathData
+                fileImage = File(filePathData)
+                fileUri = fileImage!!.toUri()
             }
         } else {
             toast("File path tidak terbaca")
@@ -315,20 +503,25 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     }
 
     companion object {
-        private const val FIELD_NAME = "BERAT_MUATAN"
-        const val FIRST_WEIGHT = "FIRST"
-        const val SECOND_WEIGHT = "SECOND"
+        private const val FIRST_PHOTO = "FIRST"
+        private const val SECOND_PHOTO = "SECOND"
+        const val FIRST_WEIGHT = "first"
+        const val SECOND_WEIGHT = "second"
+        const val DONE = "done"
         private var ticketStatus = ""
         private var ticketData: Ticket? = null
+        private var isEditRequested = false
 
         fun newInstance(
             context: Context,
             status: String,
             data: Ticket? = null,
+            isRequested: Boolean = false
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
             ticketStatus = status
             ticketData = data
+            isEditRequested = isRequested
             context.startActivity(intent)
         }
     }

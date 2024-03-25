@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
@@ -12,24 +12,28 @@ import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
 import com.blanccone.core.ui.widget.FilterBottomSheet
+import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
+import com.blanccone.core.util.Utils.toast
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
-import com.blanccone.sawitproweighbridge.ui.viewmodel.ListTicketViewModel
+import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.StorageReference
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>() {
+class ListSecondWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
 
-    private val viewModel: ListTicketViewModel by activityViewModels()
+    private val viewModel: WeighmentViewModel by activityViewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }
@@ -37,8 +41,12 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
 
+    @Inject
+    internal lateinit var storageDb: StorageReference
+
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
+    private var imagePath = ""
 
     override fun inflateLayout(
         inflater: LayoutInflater,
@@ -61,11 +69,25 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
     }
 
     private fun setObserves() {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            it?.let { isLoading ->
+                showLoading(isLoading)
+            }
+        }
         viewModel.tickets.observe(viewLifecycleOwner) {
             val dataList = it.filter { ticket ->
                 ticket.status == "Outbound"
             }
             updateTicketList(dataList)
+        }
+        viewModel.images.observe(viewLifecycleOwner) {
+            for (image in it) {
+                if (image.imageName!!.contains("second", true)) {
+                    imagePath = image.imagePath!!
+                    submitImage(image.ticketId!!)
+                }
+                break
+            }
         }
     }
 
@@ -128,6 +150,54 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
                 }
             }
         }
+        ticketAdapter.setOnItemClickListener {
+            when (it.action) {
+                WeighmentTicketAdapter.ACTION_ITEM_CLICK -> EFormWeighmentActivity.newInstance(
+                    context = requireContext(),
+                    status = EFormWeighmentActivity.SECOND_WEIGHT,
+                    data = it.ticket
+                )
+
+                WeighmentTicketAdapter.ACTION_EDIT -> EFormWeighmentActivity.newInstance(
+                    context = requireContext(),
+                    status = EFormWeighmentActivity.SECOND_WEIGHT,
+                    data = it.ticket,
+                    isRequested = true
+                )
+
+                WeighmentTicketAdapter.ACTION_SUBMIT -> submitData(it.ticket)
+            }
+        }
+    }
+
+    private fun submitData(ticket: Ticket) {
+        showLoading(true)
+        firebaseDb
+            .push()
+            .setValue(ticket.toMap())
+            .addOnSuccessListener {
+                viewModel.getimages("${ticket.id}")
+            }
+            .addOnFailureListener {
+                showLoading(false)
+                toast("Gagal menyimpan data")
+            }
+    }
+
+    private fun submitImage(ticketId: String) {
+        val imageUri = File(imagePath).toUri()
+        storageDb
+            .child(ticketId)
+            .putFile(imageUri)
+            .addOnSuccessListener {
+                toast("Data berhasil tersimpan")
+                showLoading(false)
+                fetchFromLocal()
+            }
+            .addOnFailureListener {
+                showLoading(false)
+                toast("Gagal menyimpan data")
+            }
     }
 
     private fun showFilterBottomSheet() {
@@ -151,7 +221,8 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
             if (tickets.isNotEmpty()) {
                 tickets.forEach {
                     if ((it.driverName != null && it.driverName!!.contains(text, true)) ||
-                        (it.licenseNumber != null && it.licenseNumber!!.contains(text, true))) {
+                        (it.licenseNumber != null && it.licenseNumber!!.contains(text, true))
+                    ) {
                         searchedTickets.add(it)
                     }
                 }
@@ -167,13 +238,14 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
             FilterBottomSheet.URUTKAN_NAMA_AZ -> tickets.sortedByDescending { it.driverName }
             FilterBottomSheet.URUTKAN_NAMA_ZA -> tickets.sortedBy { it.driverName }
             FilterBottomSheet.URUTKAN_TERBARU -> tickets.sortedByDescending { ticket ->
-                ticket.weighedOn ?.let {
+                ticket.firstWeighedOn?.let {
                     calendar.time = dateFormat.parse(it) ?: Date(0)
                     calendar.time
                 }
             }
+
             else -> tickets.sortedBy { ticket ->
-                ticket.weighedOn ?.let {
+                ticket.firstWeighedOn?.let {
                     calendar.time = dateFormat.parse(it) ?: Date(0)
                     calendar.time
                 }
@@ -183,7 +255,11 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
         updateTicketList(sortedTickets)
     }
 
-    private fun toast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            LoadingDialog.showDialog(childFragmentManager)
+        } else {
+            LoadingDialog.dismissDialog(childFragmentManager)
+        }
     }
 }

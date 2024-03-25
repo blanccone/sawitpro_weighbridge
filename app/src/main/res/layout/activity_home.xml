@@ -82,12 +82,12 @@
                         app:drawableStartCompat="@drawable/ic_inbound_24"
                         app:drawableTint="@color/color_primary"
                         app:layout_constraintTop_toBottomOf="@id/tv_pas_label"
-                        app:layout_constraintBottom_toTopOf="@id/tv_tv_first_weight"
+                        app:layout_constraintBottom_toTopOf="@id/tv_first_weight"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/divider_1"/>
 
                     <TextView
-                        android:id="@+id/tv_tv_first_weight"
+                        android:id="@+id/tv_first_weight"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"

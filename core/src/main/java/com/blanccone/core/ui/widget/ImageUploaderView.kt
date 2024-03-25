@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.AttributeSet
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -185,6 +186,61 @@ class ImageUploaderView(
         }
     }
 
+    fun loadFromFirebase(fileUri: Uri) {
+        binding.apply {
+            val errorNoImage = R.drawable.ic_no_image
+            val loading = (piLoading.background as AnimationDrawable)
+            cslUpload.hide()
+            cvRefresh.hide()
+            ivResult.show()
+            piLoading.show()
+            loading.start()
+            Glide.with(context)
+                .load(fileUri)
+                .apply(
+                    RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                )
+                .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loading.stop()
+                        piLoading.hide()
+                        ivResult.background =
+                            ContextCompat.getDrawable(context, errorNoImage)
+                        ivResult.show()
+                        cvRefresh.show()
+                        isFileDetected = true
+                        isImageLoadSucceed = false
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loading.stop()
+                        piLoading.hide()
+                        cvRefresh.hide()
+                        ivResult.show()
+                        isFileDetected = true
+                        isImageLoadSucceed = true
+                        return false
+                    }
+                })
+                .into(ivResult)
+        }
+    }
+
     private fun loadFileFromRemote() {
         binding.apply {
             val errorNoImage = R.drawable.ic_no_image
@@ -271,8 +327,6 @@ class ImageUploaderView(
     }
 
     private var onCameraClickListener: ((String) -> Unit)? = null
-    private var onGalleryClickListener: ((String) -> Unit)? = null
-    private var onDocumentClickListener: ((String) -> Unit)? = null
     private var onMultipleFilesListener: ((String) -> Unit)? = null
     private var onOpenFileListener: (() -> Unit)? = null
     private var onDeleteFileListener: ((String) -> Unit)? = null
