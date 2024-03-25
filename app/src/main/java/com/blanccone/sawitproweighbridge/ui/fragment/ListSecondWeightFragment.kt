@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
 import com.blanccone.core.ui.widget.FilterBottomSheet
+import com.blanccone.core.util.Utils
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
+import com.blanccone.sawitproweighbridge.ui.viewmodel.ListTicketViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -21,13 +25,17 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>() {
+
+    private val viewModel: ListTicketViewModel by activityViewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }
 
-    private lateinit var firebaseDb: DatabaseReference
+    @Inject
+    internal lateinit var firebaseDb: DatabaseReference
 
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
@@ -45,42 +53,59 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        firebaseDb = FirebaseDatabase.getInstance().reference
         setTicketListView()
         setFilterListView()
         setEvent()
-        fetchDataFromFirebase()
+        setObserves()
+        fetchFromFirebase()
     }
 
-    private fun fetchDataFromFirebase() {
-        firebaseDb
-            .child("tickets")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    tickets.clear()
-                    for (ticketSnapshot in snapshot.children) {
-                        val ticket = ticketSnapshot.getValue(Ticket::class.java)
-                        ticket?.let {
-                            if (ticket.status == "Outbound") {
-                                tickets.add(it)
-                            }
+    private fun setObserves() {
+        viewModel.tickets.observe(viewLifecycleOwner) {
+            val dataList = it.filter { ticket ->
+                ticket.status == "Outbound"
+            }
+            updateTicketList(dataList)
+        }
+    }
+
+    private fun fetchFromFirebase() {
+        firebaseDb.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                tickets.clear()
+                for (ticketSnapshot in snapshot.children) {
+                    val ticket = ticketSnapshot.getValue(Ticket::class.java)
+                    ticket?.let {
+                        if (ticket.status == "Outbound") {
+                            tickets.add(it)
                         }
                     }
-                    if (tickets.isNotEmpty()) {
-                        setFilterListView()
-                    }
-                    updateTickets(tickets)
                 }
+                binding.rvFilter.isVisible = tickets.isNotEmpty()
+                updateTicketsToLocal(tickets)
+            }
 
-                override fun onCancelled(error: DatabaseError) { }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                if (!Utils.isConnected(requireContext())) {
+                    fetchFromLocal()
+                }
+            }
+        })
     }
 
-    private fun updateTickets(dataList: List<Ticket>) {
+    private fun fetchFromLocal() {
+        viewModel.gettickets()
+    }
+
+    private fun updateTicketsToLocal(dataList: List<Ticket>) {
+        viewModel.insertTickets(dataList)
+    }
+
+    private fun updateTicketList(dataList: List<Ticket>) {
         ticketAdapter.updateTickets(dataList)
     }
 
-    private fun updateFilter() {
+    private fun updateFilterList() {
         filterAdapter.submitData(arrayListOf(selectedFilter))
     }
 
@@ -130,7 +155,7 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
                         searchedTickets.add(it)
                     }
                 }
-                updateTickets(searchedTickets)
+                updateTicketList(searchedTickets)
             }
         }
     }
@@ -154,8 +179,8 @@ class ListSecondWeightFragment: CoreFragment<LayoutListWeighmentTicketBinding>()
                 }
             }
         }
-        updateFilter()
-        updateTickets(sortedTickets)
+        updateFilterList()
+        updateTicketList(sortedTickets)
     }
 
     private fun toast(message: String) {

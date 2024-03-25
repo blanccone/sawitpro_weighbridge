@@ -3,6 +3,7 @@ package com.blanccone.sawitproweighbridge.ui.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.sawitproweighbridge.databinding.ItemWeighmentTicketBinding
@@ -35,9 +36,18 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
             tvNama.text = ticket.driverName
             tvBeratMuatan.text = ticket.weight.toString()
             tvStatus.text = ticket.status
+            cslBtn.isVisible = ticket.status != "Done"
+
+            btnEdit.setOnClickListener {
+                onItemClickListener?.let { it(ItemData(ACTION_EDIT, ticket)) }
+            }
 
             btnSubmit.setOnClickListener {
-                onSubmitClickListener?.let { it(ticket) }
+                onItemClickListener?.let { it(ItemData(ACTION_SUBMIT, ticket)) }
+            }
+
+            root.setOnClickListener {
+                onItemClickListener?.let { it(ItemData(ACTION_ITEM_CLICK, ticket)) }
             }
         }
     }
@@ -50,15 +60,17 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
         notifyDataSetChanged()
     }
 
-    private var onSubmitClickListener: ((Ticket) -> Unit)? = null
+    private var onItemClickListener: ((ItemData) -> Unit)? = null
 
-    fun setOnSubmitClickListener(listener: ((Ticket) -> Unit)) {
-        onSubmitClickListener = listener
+    fun setOnItemClickListener(listener: ((ItemData) -> Unit)) {
+        onItemClickListener = listener
     }
 
-    private var onEditClickListener: ((Ticket) -> Unit)? = null
+    data class ItemData(val action: String, val ticket: Ticket)
 
-    fun setOnEditClickListener(listener: ((Ticket) -> Unit)) {
-        onSubmitClickListener = listener
+    companion object {
+        const val ACTION_ITEM_CLICK = "item_click"
+        const val ACTION_SUBMIT = "submit"
+        const val ACTION_EDIT = "edit"
     }
 }

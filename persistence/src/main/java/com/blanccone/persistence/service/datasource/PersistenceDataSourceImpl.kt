@@ -11,6 +11,12 @@ class PersistenceDataSourceImpl @Inject constructor(
     private val appDatabase: AppDatabase
 ) : PersistenceDataSource {
 
+    override suspend fun insertTickets(tickets: List<Ticket>): List<Long> {
+        return appDatabase.appDao().insertTickets(
+            TicketEntity.setEntityList(tickets)
+        )
+    }
+
     override suspend fun insertTicket(ticket: Ticket): Long {
         return appDatabase.appDao().insertTicket(
             TicketEntity.setEntity(ticket)

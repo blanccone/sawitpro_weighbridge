@@ -38,6 +38,7 @@
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/white"
         app:tabBackground="@color/color_primary"
+        app:tabTextAppearance="@style/MainTabTextAppearance"
         android:elevation="4dp"
         android:background="@color/color_primary"
         app:layout_constraintEnd_toEndOf="parent"

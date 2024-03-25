@@ -5,6 +5,8 @@ import com.blanccone.core.model.local.WeightImage
 
 interface PersistenceDataSource {
 
+    suspend fun insertTickets(tickets: List<Ticket>): List<Long>
+
     suspend fun insertTicket(ticket: Ticket): Long
 
     suspend fun getTickets(): List<Ticket>

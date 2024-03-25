@@ -41,17 +41,14 @@ class ListTicketViewModel @Inject constructor(
         }
     }
 
-    private val _images = LiveEvent<List<WeightImage>>()
-    val images: LiveData<List<WeightImage>> = _images
-    fun getimages() = viewModelScope.launch {
-        persistenceRepository.getImages().collectLatest {
+    private val _insertSuccessful = LiveEvent<Boolean>()
+    val insertSuccessful: LiveData<Boolean> = _insertSuccessful
+    fun insertTickets(tickets: List<Ticket>) = viewModelScope.launch {
+        persistenceRepository.insertTickets(tickets).collectLatest {
             _isLoading.postValue(it is Resource.Loading)
             when(it) {
-                is Resource.Success -> _images.postValue(it.data ?: emptyList())
-                is Resource.Error -> {
-                    _images.postValue(emptyList())
-                    _error.postValue(it.message ?: unknownMsg())
-                }
+                is Resource.Success -> _insertSuccessful.postValue(true)
+                is Resource.Error -> _error.postValue(it.message ?: unknownMsg())
                 else -> Unit
             }
         }

@@ -12,7 +12,9 @@ import com.blanccone.sawitproweighbridge.databinding.ActivityListTicketBinding
 import com.blanccone.sawitproweighbridge.ui.fragment.ListFirstWeightFragment
 import com.blanccone.sawitproweighbridge.ui.fragment.ListSecondWeightFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
 
     override fun inflateLayout(inflater: LayoutInflater): ActivityListTicketBinding {
@@ -21,6 +23,12 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            title = "Tickets"
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
         setViewPager()
         setEvent()
     }

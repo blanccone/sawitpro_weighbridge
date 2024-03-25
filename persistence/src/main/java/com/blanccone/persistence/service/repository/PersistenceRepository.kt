@@ -14,6 +14,17 @@ class PersistenceRepository @Inject constructor(
     private val dataSource: PersistenceDataSource
 ) {
 
+    fun insertTickets(tickets: List<Ticket>): Flow<Resource<List<Long>>> =
+        object : DatabaseBoundSource<List<Long>, List<Long>>(QUERY_INSERT_MULTIPLE) {
+            override suspend fun fetchFromLocal(): List<Long> {
+                return dataSource.insertTickets(tickets)
+            }
+
+            override suspend fun postProcess(originalData: List<Long>): List<Long> {
+                return originalData
+            }
+        }.asFlow().flowOn(Dispatchers.IO)
+
     fun insertTicket(ticket: Ticket): Flow<Resource<Long>> =
         object : DatabaseBoundSource<Long, Long>(QUERY_INSERT_SINGLE) {
             override suspend fun fetchFromLocal(): Long {

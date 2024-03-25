@@ -51,6 +51,22 @@ class EFormWeighmentViewModel @Inject constructor(
         }
     }
 
+    private val _images = LiveEvent<List<WeightImage>>()
+    val images: LiveData<List<WeightImage>> = _images
+    fun getimages() = viewModelScope.launch {
+        persistenceRepository.getImages().collectLatest {
+            _isLoading.postValue(it is Resource.Loading)
+            when(it) {
+                is Resource.Success -> _images.postValue(it.data ?: emptyList())
+                is Resource.Error -> {
+                    _images.postValue(emptyList())
+                    _error.postValue(it.message ?: unknownMsg())
+                }
+                else -> Unit
+            }
+        }
+    }
+
     private val _updateSuccessful = LiveEvent<Ticket?>()
     val updateSuccessful: LiveData<Ticket?> = _updateSuccessful
     fun updateTicket(ticket: Ticket) = viewModelScope.launch {

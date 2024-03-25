@@ -1,13 +1,16 @@
 package com.blanccone.core.util
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Base64
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -96,5 +99,13 @@ object Utils {
 
         val targetFormat = SimpleDateFormat(outFormat, Locale.getDefault())
         return targetFormat.format(originalDate)
+    }
+
+    fun Activity.toast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun Fragment.toast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

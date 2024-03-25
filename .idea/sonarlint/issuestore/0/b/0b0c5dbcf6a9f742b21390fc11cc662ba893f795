@@ -1,4 +1,4 @@
 
->kotlin:S1128"Remove this unused import.(üò¢–øÿÿÿÿ8ÈÙïç1
->kotlin:S1128"Remove this unused import.(•ó†Ïÿÿÿÿÿ8ÉÙïç1
-~kotlin:S1186O"ZAdd a nested comment explaining why this function is empty or complete the implementation.(ùÔ×Ğÿÿÿÿÿ8ËÙïç1
+Okotlin:S1144Ÿ"0Remove this unused private "disableView" method.(“çÉ48£ìŸç1
+Pkotlin:S1144«"0Remove this unused private "isDataValid" method.(œ®ò„8£ìŸç1
+~kotlin:S1186a"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Üıìªÿÿÿÿÿ8©£ìŸç1

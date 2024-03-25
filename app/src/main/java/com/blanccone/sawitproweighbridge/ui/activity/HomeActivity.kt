@@ -4,13 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.activity.viewModels
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.sawitproweighbridge.databinding.ActivityHomeBinding
 import com.blanccone.sawitproweighbridge.ui.HomeMenuAdapter
+import com.blanccone.sawitproweighbridge.ui.viewmodel.ListTicketViewModel
 import com.blanccone.sawitproweighbridge.util.Const
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeActivity: CoreActivity<ActivityHomeBinding>() {
 
+    private val viewModel: ListTicketViewModel by viewModels()
 
     private val homeMenuAdapter by lazy { HomeMenuAdapter() }
 
@@ -20,6 +25,12 @@ class HomeActivity: CoreActivity<ActivityHomeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            title = "Weighment Home"
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
         setMenu()
         setEvent()
     }

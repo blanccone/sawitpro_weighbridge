@@ -26,6 +26,22 @@ internal data class TicketEntity(
                 status = ticket.status
             )
         }
+
+        fun setEntityList(tickets: List<Ticket>): List<TicketEntity> {
+            val dataList = arrayListOf<TicketEntity>()
+            tickets.forEach { ticket ->
+                val data = TicketEntity(
+                    id = "${ticket.id}",
+                    licenseNumber = ticket.licenseNumber,
+                    driverName = ticket.driverName,
+                    weight = ticket.weight,
+                    weighedOn = ticket.weighedOn,
+                    status = ticket.status
+                )
+                dataList.add(data)
+            }
+            return dataList
+        }
     }
 
     fun getEntity() = Ticket(

@@ -83,16 +83,12 @@ X
 (persistence/src/main/AndroidManifest.xml,8/a/8a9ef1ad548487bcd89ad09f24ae12032dda7f2e
 L
 persistence/build.gradle.kts,5/6/56f802ad245011054b251ea30c25a21f0e5a63fd
-x
-Hpersistence/src/main/java/com/blanccone/persistence/entity/AyatEntity.kt,e/6/e694d5bf9e3960831a14acfcd581bf713e7fdcaf
 z
 Jpersistence/src/main/java/com/blanccone/persistence/entity/TicketEntity.kt,9/1/914fc091f8a93a7e79e49a14f6ea8421e4f85581
 {
 Kpersistence/src/main/java/com/blanccone/persistence/di/PersistenceModule.kt,2/b/2bb2d599c87d85b76885c9bcd278a0f8d9451c62
 è
 _persistence/src/main/java/com/blanccone/persistence/service/datasource/PersistenceDataSource.kt,f/5/f5cd0029135857d3e5fbc282df72256d3a341a9c
-y
-Ipersistence/src/main/java/com/blanccone/persistence/entity/WeightImage.kt,7/4/74d3f43da72c1a051dce7a866c8829dc48bca247
 m
 =persistence/src/main/java/com/blanccone/persistence/AppDao.kt,2/b/2b56aeada06d30143fd1b5f6ad8b1107eba1338f
 p
@@ -103,8 +99,6 @@ cpersistence/src/main/java/com/blanccone/persistence/service/datasource/Persiste
 Opersistence/src/main/java/com/blanccone/persistence/entity/WeightImageEntity.kt,d/8/d8750ac8d0c539fcce9ec32143061023f0193539
 è
 _persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e/b/ebd44b47a66c279845b82439d664c55afe9aded5
-É
-Sapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/StartingActivity.kt,f/f/ff6ce802045ccc9ed0b38b87bd30b4e508af4d02
 á
 Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/SplashScreenActivity.kt,e/8/e8ec50fcdffec7e1e352a3e8ba20ff2d8787dc20
 j
@@ -117,8 +111,6 @@ Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/ListTicketView
 Kapp/src/main/java/com/blanccone/sawitproweighbridge/di/ApplicationModule.kt,0/2/026779d715ea838e8ae7d4545807411ec6c80185
 r
 Bpersistence/src/main/java/com/blanccone/persistence/AppDatabase.kt,9/2/926cf2a19792af24b50449c78aa87e61f171a9dd
-x
-Hcore/src/main/java/com/blanccone/core/service/util/NetworkBoundSource.kt,9/4/944ec59f94e6c8e00787b0c53f1f37d6ba8ad107
 r
 Bcore/src/main/java/com/blanccone/core/service/util/NetworkUtils.kt,3/0/306a52cd1c9409258334bfb78554c9950039e48f
 y
@@ -127,3 +119,7 @@ m
 =core/src/main/java/com/blanccone/core/di/ApplicationModule.kt,8/4/843804df04c15af2c68a3528ffafa31bc00f4700
 q
 Acore/src/main/java/com/blanccone/core/ui/fragment/CoreFragment.kt,0/6/069dd3a7818316898336307b144c5de95cc4a061
+t
+Dcore/src/main/java/com/blanccone/core/ui/adapter/ViewPagerAdapter.kt,6/a/6ad6d5e2a002ef83ead6de323c5c65f35819581e
+g
+7core/src/main/java/com/blanccone/core/util/ViewUtils.kt,9/e/9e5ffc0c938e3fb92a8cf39161c5cb6b1ddde06a

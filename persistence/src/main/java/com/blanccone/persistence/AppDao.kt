@@ -18,6 +18,9 @@ internal interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTicket(ticket: TicketEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTickets(tickets: List<TicketEntity>): List<Long>
+
     @Transaction
     @Query("SELECT * FROM tb_ticket")
     suspend fun getTicketsList(): List<Ticket>

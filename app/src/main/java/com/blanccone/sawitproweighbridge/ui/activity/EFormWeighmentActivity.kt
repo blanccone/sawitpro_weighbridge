@@ -3,15 +3,21 @@ package com.blanccone.sawitproweighbridge.ui.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
-import android.widget.Toast
+import android.view.View
+import android.widget.EditText
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.widget.LoadingDialog
@@ -20,14 +26,19 @@ import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.generateUniqueId
 import com.blanccone.core.util.Utils.getCurrentDateTime
 import com.blanccone.core.util.Utils.reformatDate
+import com.blanccone.core.util.Utils.toast
+import com.blanccone.core.R
+import com.blanccone.core.util.ViewUtils.backgroundTint
+import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
+import com.blanccone.sawitproweighbridge.ui.viewmodel.EFormWeighmentViewModel
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -36,16 +47,19 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
+    private val viewModel: EFormWeighmentViewModel by viewModels()
+
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
     @Inject
     internal lateinit var storageDb: StorageReference
 
-    private var isFirstEntry = false
     private val currentDateTime = getCurrentDateTime("ddMMyyyyHHmmssSS")
 
     private var filePath: String? = null
     private var fileUri: Uri? = null
+
+    private var fields = hashMapOf<TextInputLayout, View>()
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -63,29 +77,49 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            title = when (ticketStatus) {
+                FIRST_WEIGHT -> "First Weight"
+                SECOND_WEIGHT -> "Second Weight"
+                else -> "Result"
+            }
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
         setView()
         setEvent()
-        fetchDataFromFirebase()
+        fetchFromFirebase()
     }
 
-    private fun fetchDataFromFirebase() {
-        firebaseDb
-            .child("tickets")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    isFirstEntry = snapshot.exists()
-                }
+    private fun fetchFromFirebase() {
+        firebaseDb.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+            }
 
-                override fun onCancelled(error: DatabaseError) { }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                if (!Utils.isConnected(this@EFormWeighmentActivity)) {
+                    fetchFromLocal()
+                }
+            }
+        })
+    }
+
+    private fun fetchFromLocal() {
+        viewModel.getimages()
     }
 
     private fun setView() {
         with(binding) {
+            fields = hashMapOf(
+                tilNoPol to etNoPol,
+                tilNama to etNama,
+                tilBeratMuatan to etBeratMuatan
+            )
             etWaktuTimbang.setText(
                 currentDateTime.reformatDate(
-                "ddMMyyyyHHmmssSS",
-                "dd/MM/yyyy HH:mm:ss"
+                    "ddMMyyyyHHmmssSS",
+                    "dd/MM/yyyy HH:mm:ss"
                 )
             )
             iuvImageBeratMuatanFirst.apply {
@@ -196,12 +230,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     }
 
     private fun saveImage(ticketId: String) {
-        if(isImageReady(ticketId)) {
+        if (isImageReady(ticketId)) {
             storageDb
                 .child(ticketId)
                 .putFile(fileUri!!)
                 .addOnSuccessListener {
                     toast("Data berhasil tersimpan")
+                    showLoading(false)
                     finish()
                 }
                 .addOnFailureListener {
@@ -241,10 +276,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
     }
 
-    private fun toast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             LoadingDialog.showDialog(supportFragmentManager)
@@ -253,16 +284,51 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
     }
 
+    private fun disableView() {
+        val disabledColor = ContextCompat.getColor(this, R.color.grey5)
+        for ((_, et) in fields) {
+            et.isEnabled = false
+            if (et is EditText) {
+                ViewCompat.setBackgroundTintList(et, ColorStateList.valueOf(disabledColor))
+            } else {
+                et.backgroundTint(R.color.grey5)
+            }
+        }
+    }
+
+    private fun isDataValid(): Boolean {
+        var isValid = true
+        for ((til, et) in fields) {
+            if (et is TextInputEditText && et.text.isNullOrBlank()) {
+                til.stateError()
+                isValid = false
+            }
+            if (et is AppCompatAutoCompleteTextView && et.text.isNullOrBlank()) {
+                til.stateError()
+                isValid = false
+            }
+        }
+        if (!isValid) {
+            toast("Mohon lengkapi data")
+        }
+        return isValid
+    }
+
     companion object {
         private const val FIELD_NAME = "BERAT_MUATAN"
+        const val FIRST_WEIGHT = "FIRST"
+        const val SECOND_WEIGHT = "SECOND"
         private var ticketStatus = ""
+        private var ticketData: Ticket? = null
 
         fun newInstance(
             context: Context,
-            status: String
+            status: String,
+            data: Ticket? = null,
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
             ticketStatus = status
+            ticketData = data
             context.startActivity(intent)
         }
     }
