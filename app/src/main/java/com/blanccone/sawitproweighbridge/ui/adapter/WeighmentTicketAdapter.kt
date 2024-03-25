@@ -34,7 +34,13 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
             tvTiket.text = ticket.id
             tvNoPol.text = ticket.licenseNumber?.uppercase()
             tvNama.text = ticket.driverName
-            tvBeratMuatan.text = ticket.weight.toString()
+            tvBeratMasuk.text = ticket.firstWeight.toString()
+            tvBeratKeluarLabel.isVisible = ticket.status != "Inbound"
+            tvBeratKeluarColon.isVisible = ticket.status != "Inbound"
+            tvBeratKeluar.apply {
+                isVisible = ticket.status != "Inbound"
+                text = ticket.secondWeight.toString()
+            }
             tvStatus.text = ticket.status
             cslBtn.isVisible = ticket.status != "Done"
 

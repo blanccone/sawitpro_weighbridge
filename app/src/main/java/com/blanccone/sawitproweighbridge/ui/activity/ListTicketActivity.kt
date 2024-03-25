@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.blanccone.core.ui.activity.CoreActivity
@@ -59,6 +60,13 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
                 EFormWeighmentActivity.newInstance(this@ListTicketActivity, "FIRST")
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

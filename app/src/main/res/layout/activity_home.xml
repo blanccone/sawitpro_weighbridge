@@ -22,7 +22,6 @@
             android:elevation="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_back_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

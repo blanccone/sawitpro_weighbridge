@@ -46,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_tiket_label" />
 
         <ImageView
-            android:id="@+id/iv_berat_muatan_icon"
+            android:id="@+id/iv_berat_masuk_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_inbound_24"
@@ -115,16 +115,29 @@
                 app:layout_constraintTop_toBottomOf="@id/iv_vehicle_icon"/>
 
             <TextView
-                android:id="@+id/tv_berat_muatan_label"
+                android:id="@+id/tv_berat_masuk_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Berat (Kg)"
+                android:text="Berat Masuk (Kg)"
                 android:textSize="14sp"
                 android:textColor="@color/color_primary"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="@id/iv_vehicle_icon"
                 app:layout_constraintTop_toBottomOf="@id/tv_nama_label"/>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_berat_keluar_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Berat Keluar (Kg)"
+                android:textSize="14sp"
+                android:textColor="@color/color_primary"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintStart_toStartOf="@id/iv_vehicle_icon"
+                app:layout_constraintTop_toBottomOf="@id/tv_berat_masuk_label"/>
 
             <TextView
                 android:id="@+id/tv_status_label"
@@ -136,7 +149,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="@id/iv_vehicle_icon"
-                app:layout_constraintTop_toBottomOf="@id/tv_berat_muatan_label"
+                app:layout_constraintTop_toBottomOf="@id/tv_berat_keluar_label"
                 app:layout_constraintBottom_toTopOf="@id/csl_btn"/>
 
             <TextView
@@ -146,21 +159,35 @@
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan_colon"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_masuk_colon"
                 app:layout_constraintTop_toTopOf="@id/tv_nama_label"
                 app:layout_constraintBottom_toBottomOf="@id/tv_nama_label" />
 
             <TextView
-                android:id="@+id/tv_berat_muatan_colon"
+                android:id="@+id/tv_berat_masuk_colon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
                 android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/tv_berat_muatan_label"
-                app:layout_constraintTop_toTopOf="@id/tv_berat_muatan_label"
-                app:layout_constraintBottom_toBottomOf="@id/tv_berat_muatan_label" />
+                app:layout_constraintStart_toEndOf="@id/tv_berat_masuk_label"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_masuk_label"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_masuk_label" />
+
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_berat_keluar_colon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textStyle="bold"
+                android:textColor="@color/color_primary"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/tv_berat_keluar_label"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_keluar_label"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_keluar_label" />
 
             <TextView
                 android:id="@+id/tv_status_colon"
@@ -169,7 +196,7 @@
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan_colon"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_masuk_colon"
                 app:layout_constraintTop_toTopOf="@id/tv_status_label"
                 app:layout_constraintBottom_toBottomOf="@id/tv_status_label" />
 
@@ -180,21 +207,34 @@
                 android:text="Yanto Kates"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_masuk"
                 app:layout_constraintTop_toTopOf="@id/tv_nama_colon"
                 app:layout_constraintBottom_toBottomOf="@id/tv_nama_colon" />
 
             <TextView
-                android:id="@+id/tv_berat_muatan"
+                android:id="@+id/tv_berat_masuk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15000"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
                 android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/tv_berat_muatan_colon"
-                app:layout_constraintTop_toTopOf="@id/tv_berat_muatan_colon"
-                app:layout_constraintBottom_toBottomOf="@id/tv_berat_muatan_colon" />
+                app:layout_constraintStart_toEndOf="@id/tv_berat_masuk_colon"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_masuk_colon"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_masuk_colon" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_berat_keluar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15000"
+                android:textStyle="bold"
+                android:textColor="@color/color_primary"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/tv_berat_keluar_colon"
+                app:layout_constraintTop_toTopOf="@id/tv_berat_keluar_colon"
+                app:layout_constraintBottom_toBottomOf="@id/tv_berat_keluar_colon" />
 
             <TextView
                 android:id="@+id/tv_status"
@@ -203,7 +243,7 @@
                 android:text="Inbound"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@id/tv_berat_muatan"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_masuk"
                 app:layout_constraintTop_toTopOf="@id/tv_status_colon"
                 app:layout_constraintBottom_toBottomOf="@id/tv_status_colon" />
 

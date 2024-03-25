@@ -23,12 +23,12 @@
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/piLoading"
-        android:layout_width="120dp"
-        android:layout_height="1200dp"
-        android:minWidth="120dp"
+        android:layout_width="106dp"
+        android:layout_height="106dp"
+        android:minWidth="106dp"
         android:indeterminate="true"
         app:indicatorColor="@color/color_accent"
-        app:indicatorSize="120dp"
+        app:indicatorSize="106dp"
         app:layout_constraintTop_toTopOf="@id/ivLogo"
         app:layout_constraintStart_toStartOf="@id/ivLogo"
         app:layout_constraintEnd_toEndOf="@id/ivLogo"

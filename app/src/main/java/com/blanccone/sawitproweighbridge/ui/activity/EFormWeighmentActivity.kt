@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.activity.result.ActivityResult
@@ -500,6 +501,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             toast("Mohon lengkapi data")
         }
         return isValid
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

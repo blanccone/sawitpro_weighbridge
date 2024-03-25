@@ -12,19 +12,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="MainTheme.EdgeToEdge" parent="MainTheme.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="SplashScreen.Theme" parent="Fullscreen.Theme">
-        <item name="android:windowDisablePreview">true</item>
-    </style>
-
-    <style name="Fullscreen.Theme" parent="MainTheme.EdgeToEdge">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
-    </style>
-
     <style name="roundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>

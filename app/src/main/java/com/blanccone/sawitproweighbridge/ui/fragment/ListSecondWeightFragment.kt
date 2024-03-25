@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -31,9 +33,10 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ListSecondWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
 
-    private val viewModel: WeighmentViewModel by activityViewModels()
+    private val viewModel: WeighmentViewModel by viewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }

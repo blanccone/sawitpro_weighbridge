@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -50,6 +51,12 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            title = "Weighment Results"
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
         setTicketListView()
         setFilterListView()
         setEvent()
@@ -202,6 +209,13 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         } else {
             LoadingDialog.dismissDialog(supportFragmentManager)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

@@ -39,11 +39,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            title = "Weighment Home"
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
+        supportActionBar?.title = "Weighment Home"
         setMenu()
         setEvent()
         setObserves()
@@ -87,8 +83,8 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         val inboundTickets = tickets.filter { ticket -> ticket.status == "Inbound" }
         val outboundTickets = tickets.filter { ticket -> ticket.status == "Outbound" }
         with(binding) {
-            tvFirstWeight.setText(inboundTickets.size)
-            tvSecondWeight.setText(outboundTickets.size)
+            tvFirstWeight.text = inboundTickets.size.toString()
+            tvSecondWeight.text = outboundTickets.size.toString()
         }
     }
 
