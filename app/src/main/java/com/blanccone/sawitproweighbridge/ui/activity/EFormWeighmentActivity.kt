@@ -7,6 +7,8 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.InputFilter
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -198,8 +200,11 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
                 fields[tilBeratKeluar] = etBeratKeluar
             }
-            etNoPol.doAfterTextChanged {
-                tilNoPol.removeError()
+            etNoPol.apply {
+                filters = arrayOf(InputFilter.AllCaps())
+                doAfterTextChanged {
+                    tilNoPol.removeError()
+                }
             }
             etNama.doAfterTextChanged {
                 tilNama.removeError()
