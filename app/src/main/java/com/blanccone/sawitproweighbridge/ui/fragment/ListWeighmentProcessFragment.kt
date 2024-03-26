@@ -93,6 +93,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 showLoading(isLoading)
             }
         }
+
         viewModel.tickets.observe(viewLifecycleOwner) {
             val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
             val dataList = it.filter { ticket ->
@@ -105,6 +106,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             binding.rvFilter.isVisible = tickets.isNotEmpty()
             updateTicketList(tickets)
         }
+
         viewModel.images.observe(viewLifecycleOwner) {
             val status = if (ticketStatus == FIRST_WEIGHT) "first" else "second"
             for (image in it) {
@@ -115,11 +117,28 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 break
             }
         }
-        viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
-            it?.let { isSuccessful ->
-                if (isSuccessful) updateImageToLocal()
+
+        viewModel.insertTicketSuccessful.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                storeImageToLocal()
             }
         }
+
+        viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
+            it?.let { isSuccessful ->
+                if (isSuccessful) {
+                    updateImageToLocal()
+                }
+            }
+        }
+
+        viewModel.insertImageSuccessful.observe(viewLifecycleOwner) {
+            if (it) {
+                toast("Data berhasil tersimpan ke Second Weight")
+                fetchFromLocal()
+            }
+        }
+
         viewModel.updateImageSuccessful.observe(viewLifecycleOwner) {
             it?.let { isSuccessful ->
                 if (isSuccessful) {
@@ -260,12 +279,31 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             .putFile(imageUri)
             .addOnSuccessListener {
                 toast("Data berhasil tersimpan")
-                updateDataToLocal()
+                if (ticketStatus != FIRST_WEIGHT) {
+                    updateDataToLocal()
+                } else {
+                    storeDataToLocal()
+                }
             }
             .addOnFailureListener {
                 showLoading(false)
                 toast("Gagal menyimpan data")
             }
+    }
+
+    private fun storeDataToLocal() {
+        viewModel.insertTicket(validatedTicket)
+    }
+
+    private fun storeImageToLocal() {
+        val image = WeightImage(
+            id = "${validatedTicket.id}_$ticketStatus",
+            ticketId = "${validatedTicket.id}",
+            image = validatedImage.image,
+            imageName = validatedImage.imageName,
+            imagePath = validatedImage.imagePath
+        )
+        viewModel.insertImage(image)
     }
 
     private fun updateDataToLocal() {
