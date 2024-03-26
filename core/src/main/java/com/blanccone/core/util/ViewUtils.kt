@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.blanccone.core.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -74,5 +75,17 @@ object ViewUtils {
             ContextCompat.getColor(this.context,color),
             PorterDuff.Mode.SRC_IN
         )
+    }
+
+    fun SwipeRefreshLayout.startRefresh() {
+        if (!isRefreshing) {
+            isRefreshing = true
+        }
+    }
+
+    fun SwipeRefreshLayout.stopRefresh() {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
     }
 }

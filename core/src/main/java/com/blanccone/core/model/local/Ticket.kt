@@ -2,13 +2,13 @@ package com.blanccone.core.model.local
 
 data class Ticket(
     var id: String? = "",
-    val licenseNumber: String? = "",
-    val driverName: String? = "",
-    val firstWeight: Int? = 0,
-    val secondWeight: Int? = 0,
-    val firstWeighedOn: String? = "",
-    val secondWeighedOn: String? = "",
-    val status: String? = ""
+    var licenseNumber: String? = "",
+    var driverName: String? = "",
+    var firstWeight: Int? = 0,
+    var secondWeight: Int? = 0,
+    var firstWeighedOn: String? = "",
+    var secondWeighedOn: String? = "",
+    var status: String? = ""
 ) {
     fun toMap(): Map<String, Any?> {
         return mapOf(

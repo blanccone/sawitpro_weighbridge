@@ -65,6 +65,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private var fields = hashMapOf<TextInputLayout, View>()
 
+    private var validatedTicket = Ticket()
+
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             getActivityResult(it)
@@ -118,11 +120,15 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
 
         viewModel.insertTicketSuccessful.observe(this) {
-            if (!it.isNullOrEmpty()) saveImage(it)
+            if (!it.isNullOrEmpty()) storeImageToLocal(it)
         }
 
         viewModel.insertImageSuccessful.observe(this) {
-            if (it) { finish() }
+            if (it) {
+                toast("Data berhasil tersimpan")
+                setResult(RESULT_OK)
+                finish()
+            }
         }
     }
 
@@ -183,12 +189,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                                 show()
                                 setText(secondWeighedOn)
                             }
-                            iuvImageBeratMuatanFirst.isPreviewOnly = true
-                            iuvImageBeratMuatanSecond.apply {
-                                show()
-                                isPreviewOnly = true
-                            }
-                            disableView()
+                            iuvImageBeratMuatanSecond.show()
                         }
                     }
                 }
@@ -240,6 +241,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
                 setFieldName("${getCurrentDateTime("ddMMyyyyHH")}_$SECOND_PHOTO")
             }
+            if (isPreviewRequested) disableView()
         }
     }
 
@@ -357,7 +359,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 }
             }
             btnSimpan.setOnClickListener {
-                if (isDataValid()) saveData()
+                if (isDataValid()) setData()
             }
         }
     }
@@ -403,18 +405,17 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
     }
 
-    private fun saveData() {
+    private fun setData() {
         with(binding) {
             val driverName = etNama.text.toString()
             val licenseNumber = etNoPol.text.toString()
             val firstWeight = etBeratMuatanPertama.text.toString().toInt()
-            val secondWeight = if (ticketStatus != FIRST_WEIGHT)
-                etBeratMuatanKedua.text.toString().toInt() else 0
+            val secondWeight = etBeratMuatanKedua.text.toString().toInt()
             val firstWeightOn = etWaktuTimbangPertama.text.toString()
             val secondWeightOn = etWaktuTimbangKedua.text.toString()
-            val status = if (ticketStatus != FIRST_WEIGHT) "Outbound" else "Inbound"
+            val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
             val combString = "$driverName$licenseNumber$currentDateTime"
-            val ticket = Ticket(
+            validatedTicket = Ticket(
                 id = generateUniqueId(combString),
                 licenseNumber = licenseNumber,
                 driverName = driverName,
@@ -424,21 +425,53 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 secondWeighedOn = secondWeightOn,
                 status = status
             )
-            viewModel.insertTicket(ticket)
+            storeDataToFirebase(validatedTicket.toMap())
         }
     }
 
-    private fun saveImage(ticketId: String) {
-        if (isImageReady(ticketId)) {
-            val image = WeightImage(
-                id = generateUniqueId(ticketId),
-                ticketId = ticketId,
-                image = FileUtils.fileToByteArray(fileImage!!),
-                imageName = FileUtils.getFileName(filePath!!),
-                imagePath = filePath
-            )
-            viewModel.insertImage(image)
+    private fun storeDataToFirebase(ticket: Map<String, Any?>) {
+        showLoading(true)
+        firebaseDb
+            .child("${validatedTicket.id}")
+            .child("${validatedTicket.id}_$ticketStatus")
+            .setValue(ticket)
+            .addOnSuccessListener {
+                storeImageToFirebase("${ticket["id"]}")
+            }.addOnFailureListener {
+                toast("Gagal menyimpan data")
+            }
+    }
+
+    private fun storeImageToFirebase(ticketId: String) {
+        val fileName = "${ticketId}_${ticketStatus}"
+        if (isImageReady(fileName)) {
+            storageDb
+                .child(ticketId)
+                .child(fileName)
+                .putFile(fileUri!!)
+                .addOnSuccessListener {
+                    showLoading(false)
+                    storeDataToLocal()
+                }
+                .addOnFailureListener {
+                    toast("Gagal menyimpan data")
+                }
         }
+    }
+
+    private fun storeDataToLocal() {
+        viewModel.insertTicket(validatedTicket)
+    }
+
+    private fun storeImageToLocal(ticketId: String) {
+        val image = WeightImage(
+            id = "${validatedTicket.id}_$ticketStatus",
+            ticketId = ticketId,
+            image = FileUtils.fileToByteArray(fileImage!!),
+            imageName = FileUtils.getFileName(filePath!!),
+            imagePath = filePath
+        )
+        viewModel.insertImage(image)
     }
 
     private fun isImageReady(ticketId: String): Boolean {
@@ -492,6 +525,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 et.backgroundTint(R.color.grey5)
             }
         }
+        with(binding) {
+            iuvImageBeratMuatanFirst.isPreviewOnly = true
+            iuvImageBeratMuatanSecond.isPreviewOnly = true
+        }
     }
 
     private fun isDataValid(): Boolean {
@@ -528,18 +565,33 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         private var ticketStatus = ""
         private var ticketData: Ticket? = null
         private var isEditRequested = false
+        private var isPreviewRequested = false
 
         fun newInstance(
             context: Context,
             status: String,
             data: Ticket? = null,
-            isRequested: Boolean = false
+            isRequested: Boolean = false,
+            isPreviewOnly: Boolean = false
         ) {
             val intent = Intent(context, EFormWeighmentActivity::class.java)
             ticketStatus = status
             ticketData = data
             isEditRequested = isRequested
+            isPreviewRequested = isPreviewOnly
             context.startActivity(intent)
+        }
+
+        fun resultInstance(
+            context: Context,
+            status: String,
+            data: Ticket? = null,
+            isRequested: Boolean = false
+        ) : Intent {
+            ticketStatus = status
+            ticketData = data
+            isEditRequested = isRequested
+            return Intent(context, EFormWeighmentActivity::class.java)
         }
     }
 }

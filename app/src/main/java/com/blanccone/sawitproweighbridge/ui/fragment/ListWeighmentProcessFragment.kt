@@ -1,29 +1,30 @@
 package com.blanccone.sawitproweighbridge.ui.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.blanccone.core.model.local.Ticket
+import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
 import com.blanccone.core.ui.widget.FilterBottomSheet
-import com.blanccone.core.ui.widget.FilterBottomSheet.Companion.URUTKAN_NAMA_AZ
-import com.blanccone.core.ui.widget.FilterBottomSheet.Companion.URUTKAN_NAMA_ZA
-import com.blanccone.core.ui.widget.FilterBottomSheet.Companion.URUTKAN_TERBARU
-import com.blanccone.core.ui.widget.LoadingDialog
+import com.blanccone.core.util.FileUtils
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.toast
-import com.blanccone.core.util.ViewUtils.show
+import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.FIRST_WEIGHT
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
-import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter.Companion.ACTION_EDIT
-import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter.Companion.ACTION_ITEM_CLICK
-import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter.Companion.ACTION_SUBMIT
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,7 +40,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
+class ListWeighmentProcessFragment(
+    private val ticketStatus: String
+): CoreFragment<LayoutListWeighmentTicketBinding>() {
 
     private val viewModel: WeighmentViewModel by viewModels()
 
@@ -54,7 +57,14 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
 
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
-    private var imagePath = ""
+
+    private var validatedTicket = Ticket()
+    private var validatedImage = WeightImage()
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            getActivityResult(it)
+        }
 
     override fun inflateLayout(
         inflater: LayoutInflater,
@@ -69,6 +79,7 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setTicketListView()
+        setFilterListView()
         setEvent()
         setObserves()
         fetchFromFirebase()
@@ -81,18 +92,34 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
             }
         }
         viewModel.tickets.observe(viewLifecycleOwner) {
+            val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
             val dataList = it.filter { ticket ->
-                ticket.status == "Inbound"
+                ticket.status == status
             }
-            updateTicketList(dataList)
+            tickets.apply {
+                clear()
+                addAll(dataList)
+            }
+            binding.rvFilter.isVisible = tickets.isNotEmpty()
+            updateTicketList(tickets)
         }
         viewModel.images.observe(viewLifecycleOwner) {
+            val status = if (ticketStatus == FIRST_WEIGHT) "first" else "second"
             for (image in it) {
-                if (image.imageName!!.contains("first", true)) {
-                    imagePath = image.imagePath!!
-                    submitImage(image.ticketId!!)
+                if (image.id == "${image.ticketId}_$status") {
+                    validatedImage = image
+                    storeImageToFirebase()
                 }
                 break
+            }
+        }
+        viewModel.insertTicketSuccessful.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) storeImageToLocal(it)
+        }
+        viewModel.insertImageSuccessful.observe(viewLifecycleOwner) {
+            if (it) {
+                toast("Data berhasil tersimpan")
+                fetchFromLocal()
             }
         }
     }
@@ -101,19 +128,22 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
+                val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
                 for (ticketSnapshot in snapshot.children) {
                     val ticket = ticketSnapshot.getValue(Ticket::class.java)
                     ticket?.let {
-                        if (ticket.status == "Inbound") {
+                        if (ticket.status == status) {
                             tickets.add(it)
                         }
                     }
                 }
+                binding.rvFilter.isVisible = tickets.isNotEmpty()
                 if (tickets.isNotEmpty()) {
-                    binding.rvFilter.show()
-                    setFilterListView()
+                    updateTicketsToLocal(tickets)
+                    binding.srlRefresh.stopRefresh()
+                } else {
+                    fetchFromLocal()
                 }
-                updateTicketsToLocal(tickets)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -149,41 +179,77 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
     }
 
     private fun setEvent() {
-        with(binding.layoutSearch) {
-            etSearch.doAfterTextChanged {
-                searchData(it.toString())
+        with(binding) {
+            srlRefresh.setOnRefreshListener {
+                if (!Utils.isConnected(requireContext())) {
+                    fetchFromLocal()
+                } else {
+                    fetchFromFirebase()
+                }
             }
-            btnFilter.setOnClickListener {
-                showFilterBottomSheet()
+            with(layoutSearch) {
+                etSearch.doAfterTextChanged {
+                    searchData(it.toString())
+                }
+                btnFilter.setOnClickListener {
+                    showFilterBottomSheet()
+                }
             }
         }
         ticketAdapter.setOnItemClickListener {
             when (it.action) {
-                ACTION_ITEM_CLICK -> EFormWeighmentActivity.newInstance(
+                WeighmentTicketAdapter.ACTION_ITEM_CLICK -> EFormWeighmentActivity.newInstance(
                     context = requireContext(),
-                    status = EFormWeighmentActivity.FIRST_WEIGHT,
-                    data = it.ticket
-                )
-
-                ACTION_EDIT -> EFormWeighmentActivity.newInstance(
-                    context = requireContext(),
-                    status = EFormWeighmentActivity.FIRST_WEIGHT,
+                    status = ticketStatus,
                     data = it.ticket,
-                    isRequested = true
+                    isPreviewOnly = true
                 )
 
-                ACTION_SUBMIT -> submitData(it.ticket)
+                WeighmentTicketAdapter.ACTION_EDIT -> {
+                    val intent = EFormWeighmentActivity.resultInstance(
+                        context = requireContext(),
+                        status = ticketStatus,
+                        data = it.ticket,
+                        isRequested = true
+                    )
+                    resultLauncher.launch(intent)
+                }
+
+                WeighmentTicketAdapter.ACTION_SUBMIT -> setData(it.ticket)
             }
         }
     }
 
-    private fun submitData(ticket: Ticket) {
+    private fun setData(ticket: Ticket) {
+        validatedTicket = ticket.apply {
+            status = if (ticketStatus == FIRST_WEIGHT) "Outbound" else "Done"
+        }
+        storeDataToFirebase(validatedTicket.toMap())
+    }
+
+    private fun storeDataToFirebase(ticket: Map<String, Any?>) {
         showLoading(true)
         firebaseDb
-            .push()
-            .setValue(ticket.toMap())
+            .child("${validatedTicket.id}")
+            .child("${validatedTicket.id}_${ticketStatus}")
+            .setValue(ticket)
             .addOnSuccessListener {
-//                viewModel.getimages("${ticket.id}")
+                viewModel.getimages("${validatedTicket.id}")
+            }.addOnFailureListener {
+                toast("Gagal menyimpan data")
+            }
+    }
+
+    private fun storeImageToFirebase() {
+        val fileName = "${validatedTicket.id}_$ticketStatus"
+        val imageUri = File("${validatedImage.imagePath}").toUri()
+        storageDb
+            .child("${validatedTicket.id}")
+            .child(fileName)
+            .putFile(imageUri)
+            .addOnSuccessListener {
+                toast("Data berhasil tersimpan")
+                storeDataToLocal()
             }
             .addOnFailureListener {
                 showLoading(false)
@@ -191,20 +257,19 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
             }
     }
 
-    private fun submitImage(ticketId: String) {
-        val imageUri = File(imagePath).toUri()
-        storageDb
-            .child(ticketId)
-            .putFile(imageUri)
-            .addOnSuccessListener {
-                toast("Data berhasil tersimpan")
-                showLoading(false)
-                fetchFromLocal()
-            }
-            .addOnFailureListener {
-                showLoading(false)
-                toast("Gagal menyimpan data")
-            }
+    private fun storeDataToLocal() {
+        viewModel.insertTicket(validatedTicket)
+    }
+
+    private fun storeImageToLocal(ticketId: String) {
+        val image = WeightImage(
+            id = "${validatedTicket.id}_$ticketStatus",
+            ticketId = ticketId,
+            image = validatedImage.image,
+            imageName = validatedImage.imageName,
+            imagePath = validatedImage.imagePath
+        )
+        viewModel.insertImage(image)
     }
 
     private fun showFilterBottomSheet() {
@@ -242,9 +307,9 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val sortedTickets = when (selectedFilter) {
-            URUTKAN_NAMA_AZ -> tickets.sortedByDescending { it.driverName }
-            URUTKAN_NAMA_ZA -> tickets.sortedBy { it.driverName }
-            URUTKAN_TERBARU -> tickets.sortedByDescending { ticket ->
+            FilterBottomSheet.URUTKAN_NAMA_AZ -> tickets.sortedByDescending { it.driverName }
+            FilterBottomSheet.URUTKAN_NAMA_ZA -> tickets.sortedBy { it.driverName }
+            FilterBottomSheet.URUTKAN_TERBARU -> tickets.sortedByDescending { ticket ->
                 ticket.firstWeighedOn?.let {
                     calendar.time = dateFormat.parse(it) ?: Date(0)
                     calendar.time
@@ -263,10 +328,12 @@ class ListFirstWeightFragment : CoreFragment<LayoutListWeighmentTicketBinding>()
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            LoadingDialog.showDialog(childFragmentManager)
-        } else {
-            LoadingDialog.dismissDialog(childFragmentManager)
+        binding.srlRefresh.isRefreshing = isLoading
+    }
+
+    private fun getActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            fetchFromLocal()
         }
     }
 }

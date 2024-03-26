@@ -1,14 +1,19 @@
 package com.blanccone.sawitproweighbridge.ui.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.util.Utils
+import com.blanccone.core.util.ViewUtils.startRefresh
+import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.ActivityHomeBinding
 import com.blanccone.sawitproweighbridge.ui.HomeMenuAdapter
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
@@ -32,6 +37,11 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
 
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            getActivityResult(it)
+        }
+
     override fun inflateLayout(inflater: LayoutInflater): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(inflater)
     }
@@ -43,10 +53,19 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         setMenu()
         setEvent()
         setObserves()
-        viewModel.gettickets()
+        if (!Utils.isConnected(this)) {
+            fetchFromLocal()
+        } else {
+            fetchFromFirebase()
+        }
     }
 
     private fun setObserves() {
+        viewModel.isLoading.observe(this) {
+            it?.let { isLoading ->
+                binding.srlRefresh.isRefreshing = isLoading
+            }
+        }
         viewModel.tickets.observe(this) {
             setView(it)
         }
@@ -65,6 +84,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
                     }
                 }
                 setView(tickets)
+                binding.srlRefresh.stopRefresh()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -83,6 +103,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         val inboundTickets = tickets.filter { ticket -> ticket.status == "Inbound" }
         val outboundTickets = tickets.filter { ticket -> ticket.status == "Outbound" }
         with(binding) {
+            srlRefresh.stopRefresh()
             tvFirstWeight.text = inboundTickets.size.toString()
             tvSecondWeight.text = outboundTickets.size.toString()
         }
@@ -97,10 +118,25 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     private fun setEvent() {
         homeMenuAdapter.setOnItemClickListener {
             if (it == "tickets123") {
-                ListTicketActivity.newInstance(this)
+                resultLauncher.launch(ListTicketActivity.resultInstance(this))
             } else {
                 ListWeighmentResultActivity.newInstance(this)
             }
+        }
+        with(binding) {
+            srlRefresh.setOnRefreshListener {
+                if (!Utils.isConnected(this@HomeActivity)) {
+                    fetchFromLocal()
+                } else {
+                    fetchFromFirebase()
+                }
+            }
+        }
+    }
+
+    private fun getActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            fetchFromLocal()
         }
     }
 

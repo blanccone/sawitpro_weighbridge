@@ -1,22 +1,25 @@
 package com.blanccone.sawitproweighbridge.ui.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.adapter.ViewPagerAdapter
 import com.blanccone.sawitproweighbridge.databinding.ActivityListTicketBinding
-import com.blanccone.sawitproweighbridge.ui.fragment.ListFirstWeightFragment
-import com.blanccone.sawitproweighbridge.ui.fragment.ListSecondWeightFragment
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.FIRST_WEIGHT
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.SECOND_WEIGHT
+import com.blanccone.sawitproweighbridge.ui.fragment.ListWeighmentProcessFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
+class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
 
     override fun inflateLayout(inflater: LayoutInflater): ActivityListTicketBinding {
         return ActivityListTicketBinding.inflate(inflater)
@@ -32,12 +35,13 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
         }
         setViewPager()
         setEvent()
+        onBackPressedEvent()
     }
 
     private fun setViewPager() {
         val viewPagerAdapter = ViewPagerAdapter(this).apply {
-            addFragment(ListFirstWeightFragment(), "First Weight")
-            addFragment(ListSecondWeightFragment(), "Second Weight")
+            addFragment(ListWeighmentProcessFragment(FIRST_WEIGHT), "First Weight")
+            addFragment(ListWeighmentProcessFragment(SECOND_WEIGHT), "Second Weight")
         }
         with(binding) {
             vpTicket.adapter = viewPagerAdapter
@@ -59,7 +63,7 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
             fabAddTicket.setOnClickListener {
                 EFormWeighmentActivity.newInstance(
                     this@ListTicketActivity,
-                    EFormWeighmentActivity.FIRST_WEIGHT
+                    FIRST_WEIGHT
                 )
             }
         }
@@ -72,11 +76,19 @@ class ListTicketActivity: CoreActivity<ActivityListTicketBinding>() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun onBackPressedEvent() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        })
+    }
+
     companion object {
 
-        fun newInstance(context: Context) {
-            val intent = Intent(context, ListTicketActivity::class.java)
-            context.startActivity(intent)
+        fun resultInstance(context: Context): Intent {
+            return Intent(context, ListTicketActivity::class.java)
         }
     }
 }
