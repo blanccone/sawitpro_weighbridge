@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.adapter.FilterChipAdapter
@@ -20,7 +19,6 @@ import com.blanccone.core.ui.widget.FilterBottomSheet
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.toast
-import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.FIRST_WEIGHT
@@ -32,7 +30,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -42,7 +39,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
 
-    private val viewModel: WeighmentViewModel by viewModels()
+    private val viewModel: WeighmentViewModel by activityViewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }
@@ -57,7 +54,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     private var selectedFilter = "Terlama"
 
     private var validatedTicket = Ticket()
-    private var validatedImage = WeightImage()
 
     private lateinit var ticketStatus: String
 
@@ -310,6 +306,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
     private fun getActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
+            toast("reload")
             fetchFromLocal()
         }
     }

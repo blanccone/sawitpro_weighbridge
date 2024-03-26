@@ -109,3 +109,11 @@ m
 =persistence/src/main/java/com/blanccone/persistence/AppDao.kt,2\b\2b56aeada06d30143fd1b5f6ad8b1107eba1338f
 †
 Vapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/WeighmentViewModel.kt,2\b\2bc96a5ed2034ab4be554c4f7bf7c5283a3be8b3
+‰
+Yapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/EFormWeighmentActivity.kt,0\b\0b0c5dbcf6a9f742b21390fc11cc662ba893f795
+ˆ
+Xapp/src/main/java/com/blanccone/sawitproweighbridge/ui/adapter/WeighmentTicketAdapter.kt,d\a\da703cefb16a64256ae28694f1df084d38835ff6
+Ž
+^app/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/ListWeighmentResultActivity.kt,8\9\89cba78d9f690efe79b03e677205e97e8d83421a
+
+Oapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/HomeActivity.kt,6\a\6a637d9bad445018315a8567d04ed53b6526ef0c
