@@ -13,7 +13,6 @@ internal data class TicketEntity(
     val driverName: String? = "",
     val firstWeight: String? = "",
     val secondWeight: String? = "",
-    var nettWeight: String? = "",
     val firstWeighedOn: String? = "",
     val secondWeighedOn: String? = "",
     val status: String? = ""
@@ -26,7 +25,6 @@ internal data class TicketEntity(
                 driverName = ticket.driverName,
                 firstWeight = ticket.firstWeight,
                 secondWeight = ticket.secondWeight,
-                nettWeight = ticket.nettWeight,
                 firstWeighedOn = ticket.firstWeighedOn,
                 secondWeighedOn = ticket.secondWeighedOn,
                 status = ticket.status
