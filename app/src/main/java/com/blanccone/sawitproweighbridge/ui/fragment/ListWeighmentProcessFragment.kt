@@ -120,12 +120,14 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
         viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
             it?.let { isSuccessful ->
-                if (isSuccessful && ticketStatus == FIRST_WEIGHT) {
-                    updateImageToLocal()
-                } else {
-                    requireActivity().apply {
-                        setResult(Activity.RESULT_OK)
-                        finish()
+                if (isSuccessful) {
+                    if (ticketStatus == FIRST_WEIGHT) {
+                        updateImageToLocal()
+                    } else {
+                        requireActivity().apply {
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        }
                     }
                 }
             }
