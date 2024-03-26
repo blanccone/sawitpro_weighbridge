@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputFilter
-import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -42,7 +41,6 @@ import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
-import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -101,7 +99,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             setDisplayShowHomeEnabled(true)
         }
         currentDateTime = if (ticketData?.secondWeight == NOT_EDITED ||
-            (!isEditRequested && ticketStatus != DONE)) {
+            (!isEditRequested && ticketStatus != DONE)
+        ) {
             getCurrentDateTime("ddMMyyyyHHmmssSS")
         } else ""
 
@@ -236,7 +235,12 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                             etBeratKeluar.setText(secondWeight)
                             iuvImageBeratKeluar.show()
                             tilBeratBersih.show()
-                            etBeratBersih.setText(getNettWeight(firstWeight.toString(), secondWeight.toString()))
+                            etBeratBersih.setText(
+                                getNettWeight(
+                                    firstWeight.toString(),
+                                    secondWeight.toString()
+                                )
+                            )
                         }
                     }
                 }
@@ -257,7 +261,12 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                             tilBeratKeluar.show()
                             etBeratKeluar.setText(secondWeight)
                             tilBeratBersih.isVisible = secondWeight != NOT_EDITED
-                            etBeratBersih.setText(getNettWeight(firstWeight.toString(), secondWeight.toString()))
+                            etBeratBersih.setText(
+                                getNettWeight(
+                                    firstWeight.toString(),
+                                    secondWeight.toString()
+                                )
+                            )
                             iuvImageBeratKeluar.isVisible = ticketStatus == SECOND_WEIGHT
                         }
                     }
@@ -462,10 +471,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     return
                 }
             }
-            with(binding){
+            with(binding) {
                 if (ticketStatus == FIRST_WEIGHT) {
                     iuvImageBeratMasuk.setFilePath(filePath!!)
-                } else{
+                } else {
                     iuvImageBeratKeluar.setFilePath(filePath!!)
                 }
             }

@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import com.blanccone.core.model.local.Ticket
-import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
 import com.blanccone.core.ui.widget.ActionBottomSheetDialog
