@@ -118,24 +118,11 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             }
         }
 
-        viewModel.insertTicketSuccessful.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                storeImageToLocal()
-            }
-        }
-
         viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
             it?.let { isSuccessful ->
                 if (isSuccessful) {
                     updateImageToLocal()
                 }
-            }
-        }
-
-        viewModel.insertImageSuccessful.observe(viewLifecycleOwner) {
-            if (it) {
-                toast("Data berhasil tersimpan ke Second Weight")
-                fetchFromLocal()
             }
         }
 
@@ -278,31 +265,11 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             .addOnSuccessListener {
                 toast("Data berhasil tersimpan")
                 updateDataToLocal()
-//                if (ticketStatus != FIRST_WEIGHT) {
-//                    updateDataToLocal()
-//                } else {
-//                    storeDataToLocal()
-//                }
             }
             .addOnFailureListener {
                 showLoading(false)
                 toast("Gagal menyimpan data")
             }
-    }
-
-    private fun storeDataToLocal() {
-        viewModel.insertTicket(validatedTicket)
-    }
-
-    private fun storeImageToLocal() {
-        val image = WeightImage(
-            id = "${validatedTicket.id}_$ticketStatus",
-            ticketId = "${validatedTicket.id}",
-            image = validatedImage.image,
-            imageName = validatedImage.imageName,
-            imagePath = validatedImage.imagePath
-        )
-        viewModel.insertImage(image)
     }
 
     private fun updateDataToLocal() {

@@ -120,7 +120,6 @@ class WeighmentViewModel @Inject constructor(
     val tickets: LiveData<List<Ticket>> = _tickets
     fun getTickets() = viewModelScope.launch {
         persistenceRepository.getTickets().collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
                 is Resource.Success -> _tickets.postValue(it.data ?: emptyList())
                 is Resource.Error -> {
