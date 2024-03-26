@@ -455,8 +455,9 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             val secondWeightOn = etWaktuTimbangKedua.text.toString()
             val status = if (ticketStatus != FIRST_WEIGHT) "Outbound" else "Inbound"
             val combString = "$driverName$licenseNumber$currentDateTime"
+            val id = if (ticketData != null) ticketData?.id else generateUniqueId(combString)
             validatedTicket = Ticket(
-                id = generateUniqueId(combString),
+                id = id,
                 licenseNumber = licenseNumber,
                 driverName = driverName,
                 firstWeight = firstWeight,
