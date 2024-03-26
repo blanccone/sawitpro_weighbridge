@@ -270,7 +270,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun storeImageToFirebase() {
-        showLoading(true)
         val fileName = "${validatedTicket.id}_$ticketStatus"
         val imageUri = File("${validatedImage.imagePath}").toUri()
         storageDb
