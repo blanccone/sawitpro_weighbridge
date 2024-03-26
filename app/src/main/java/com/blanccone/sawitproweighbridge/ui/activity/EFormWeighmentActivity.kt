@@ -469,7 +469,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         showLoading(true)
         firebaseDb
             .child("${validatedTicket.id}")
-            .child("${validatedTicket.id}_$ticketStatus")
             .setValue(ticket)
             .addOnSuccessListener {
                 storeImageToFirebase("${ticket["id"]}")
