@@ -70,7 +70,7 @@ class PersistenceRepository @Inject constructor(
         }.asFlow().flowOn(Dispatchers.IO)
 
     fun updateTicket(ticket: Ticket) : Flow<Resource<Int>> =
-        object : DatabaseBoundSource<Int, Int>(QUERY_DELETE) {
+        object : DatabaseBoundSource<Int, Int>(QUERY_UPDATE) {
             override suspend fun fetchFromLocal(): Int {
                 return dataSource.updateTicket(ticket)
             }
@@ -81,7 +81,7 @@ class PersistenceRepository @Inject constructor(
         }.asFlow().flowOn(Dispatchers.IO)
 
     fun updateImage(image: WeightImage) : Flow<Resource<Int>> =
-        object : DatabaseBoundSource<Int, Int>(QUERY_DELETE) {
+        object : DatabaseBoundSource<Int, Int>(QUERY_UPDATE) {
             override suspend fun fetchFromLocal(): Int {
                 return dataSource.updateImage(image)
             }

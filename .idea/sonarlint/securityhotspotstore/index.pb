@@ -65,18 +65,10 @@ L
 persistence/build.gradle.kts,5/6/56f802ad245011054b251ea30c25a21f0e5a63fd
 {
 Kpersistence/src/main/java/com/blanccone/persistence/di/PersistenceModule.kt,2/b/2bb2d599c87d85b76885c9bcd278a0f8d9451c62
-è
-_persistence/src/main/java/com/blanccone/persistence/service/datasource/PersistenceDataSource.kt,f/5/f5cd0029135857d3e5fbc282df72256d3a341a9c
-m
-=persistence/src/main/java/com/blanccone/persistence/AppDao.kt,2/b/2b56aeada06d30143fd1b5f6ad8b1107eba1338f
 p
 @core/src/main/java/com/blanccone/core/model/local/WeightImage.kt,9/2/92732436cfb4d829c9a85f3c5641d6407627b030
-ì
-cpersistence/src/main/java/com/blanccone/persistence/service/datasource/PersistenceDataSourceImpl.kt,f/3/f309bf3fbfffb8f4ddbc6346e11d76871b48c433
 
 Opersistence/src/main/java/com/blanccone/persistence/entity/WeightImageEntity.kt,d/8/d8750ac8d0c539fcce9ec32143061023f0193539
-è
-_persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e/b/ebd44b47a66c279845b82439d664c55afe9aded5
 á
 Wapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/SplashScreenActivity.kt,e/8/e8ec50fcdffec7e1e352a3e8ba20ff2d8787dc20
 j

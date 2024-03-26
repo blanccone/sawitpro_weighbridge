@@ -23,7 +23,9 @@ import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.LayoutListWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.DONE
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.FIRST_WEIGHT
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.SECOND_WEIGHT
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.firebase.database.DataSnapshot
@@ -56,10 +58,10 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
 
+    private lateinit var ticketStatus: String
     private var validatedTicket = Ticket()
     private var validatedImage = WeightImage()
-
-    private lateinit var ticketStatus: String
+    private var updatedTicketStatus = ""
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -79,6 +81,8 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ticketStatus = arguments?.getString("ticketStatus") ?: ""
+        updatedTicketStatus = if (ticketStatus == FIRST_WEIGHT) SECOND_WEIGHT else DONE
+        toast(ticketStatus)
         setTicketListView()
         setFilterListView()
         setEvent()
@@ -124,27 +128,10 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             }
         }
 
-        viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
-            it?.let { isSuccessful ->
-                if (isSuccessful) {
-                    updateImageToLocal()
-                }
-            }
-        }
-
         viewModel.insertImageSuccessful.observe(viewLifecycleOwner) {
             if (it) {
                 toast("Data berhasil tersimpan ke Second Weight")
                 fetchFromLocal()
-            }
-        }
-
-        viewModel.updateImageSuccessful.observe(viewLifecycleOwner) {
-            it?.let { isSuccessful ->
-                if (isSuccessful) {
-                    toast("Data berhasil tersimpan ke Second Weight")
-                    fetchFromLocal()
-                }
             }
         }
     }
@@ -259,7 +246,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
         showLoading(true)
         firebaseDb
             .child("${validatedTicket.id}")
-            .child("${validatedTicket.id}_${ticketStatus}")
+            .child("${validatedTicket.id}_${updatedTicketStatus}")
             .setValue(ticket)
             .addOnSuccessListener {
                 viewModel.getimages("${validatedTicket.id}")
@@ -270,7 +257,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun storeImageToFirebase() {
-        val fileName = "${validatedTicket.id}_$ticketStatus"
+        val fileName = "${validatedTicket.id}_$updatedTicketStatus"
         val imageUri = File("${validatedImage.imagePath}").toUri()
         storageDb
             .child("${validatedTicket.id}")
@@ -278,11 +265,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             .putFile(imageUri)
             .addOnSuccessListener {
                 toast("Data berhasil tersimpan")
-                if (ticketStatus != FIRST_WEIGHT) {
-                    updateDataToLocal()
-                } else {
-                    storeDataToLocal()
-                }
+                storeDataToLocal()
             }
             .addOnFailureListener {
                 showLoading(false)
@@ -291,33 +274,21 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun storeDataToLocal() {
+        validatedTicket.apply {
+            id = updatedTicketStatus
+        }
         viewModel.insertTicket(validatedTicket)
     }
 
     private fun storeImageToLocal() {
         val image = WeightImage(
-            id = "${validatedTicket.id}_$ticketStatus",
+            id = "${validatedTicket.id}_$updatedTicketStatus",
             ticketId = "${validatedTicket.id}",
             image = validatedImage.image,
             imageName = validatedImage.imageName,
             imagePath = validatedImage.imagePath
         )
         viewModel.insertImage(image)
-    }
-
-    private fun updateDataToLocal() {
-        viewModel.updateTicket(validatedTicket)
-    }
-
-    private fun updateImageToLocal() {
-        val image = WeightImage(
-            id = "${validatedTicket.id}_$ticketStatus",
-            ticketId = "${validatedTicket.id}",
-            image = validatedImage.image,
-            imageName = validatedImage.imageName,
-            imagePath = validatedImage.imagePath
-        )
-        viewModel.updateImage(image)
     }
 
     private fun showFilterBottomSheet() {

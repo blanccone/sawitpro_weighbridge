@@ -114,6 +114,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
         }
 
+        viewModel.error.observe(this) {
+            toast(it.toString())
+        }
+
         viewModel.images.observe(this) {
             setImagesFromLocal(it)
         }
