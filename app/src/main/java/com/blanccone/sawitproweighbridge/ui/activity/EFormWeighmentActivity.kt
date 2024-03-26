@@ -61,7 +61,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     private var filePath: String? = null
     private var fileUri: Uri? = null
     private var fileImage: File? = null
-    private var imageFieldName= ""
+    private var imageFieldName = ""
 
     private var fields = hashMapOf<TextInputLayout, View>()
 
@@ -101,6 +101,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         setView()
         setEvent()
         setObserves()
+        setObservesFirebase()
         fetchData()
     }
 
@@ -126,7 +127,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         viewModel.insertImageSuccessful.observe(this) {
             if (it) {
                 toast("Data berhasil tersimpan")
-                setResult(RESULT_OK)
+                setResult(Activity.RESULT_OK)
                 finish()
             }
         }
@@ -137,16 +138,12 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             ticketStatus == DONE
         ) {
             ticketData?.let {
-                if (!Utils.isConnected(this)) {
-                    fetchFromLocal("${ticketData?.id}")
-                } else {
-                    fetchFromFirebase()
-                }
+                fetchFromLocal("${ticketData?.id}")
             }
         }
     }
 
-    private fun fetchFromFirebase() {
+    private fun setObservesFirebase() {
         storageDb.listAll().addOnSuccessListener { listResult ->
             val items = listResult.items
             if (items.isNotEmpty()) {
@@ -181,14 +178,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     setAutoFillDefault()
                     ticketData?.let {
                         with(it) {
-                            etBeratMuatanKedua.apply {
-                                show()
-                                setText(secondWeight.toString())
-                            }
-                            etWaktuTimbangKedua.apply {
-                                show()
-                                setText(secondWeighedOn)
-                            }
+                            tilBeratMuatanKedua.show()
+                            etBeratMuatanKedua.setText(secondWeight)
+                            tilWaktuTimbangKedua.show()
+                            etWaktuTimbangKedua.setText(secondWeighedOn)
                             iuvImageBeratMuatanSecond.show()
                         }
                     }
@@ -198,14 +191,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     setAutoFillDefault()
                     ticketData?.let {
                         with(it) {
-                            etBeratMuatanKedua.apply {
-                                isVisible = ticketStatus == SECOND_WEIGHT
-                                setText(secondWeight.toString())
-                            }
-                            etWaktuTimbangKedua.apply {
-                                isVisible = ticketStatus == SECOND_WEIGHT
-                                setText(secondWeighedOn)
-                            }
+                            tilBeratMuatanKedua.isVisible = ticketStatus == SECOND_WEIGHT
+                            etBeratMuatanKedua.setText(secondWeight.toString())
+                            tilWaktuTimbangKedua.isVisible = ticketStatus == SECOND_WEIGHT
+                            etWaktuTimbangKedua.setText(secondWeighedOn)
                             iuvImageBeratMuatanSecond.isVisible = ticketStatus == SECOND_WEIGHT
                         }
                     }
@@ -213,6 +202,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
                 ticketStatus == SECOND_WEIGHT -> {
                     setAutoFillDefault()
+                    tilBeratMuatanKedua.show()
                     etWaktuTimbangKedua.apply {
                         show()
                         setText(
@@ -409,11 +399,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         with(binding) {
             val driverName = etNama.text.toString()
             val licenseNumber = etNoPol.text.toString()
-            val firstWeight = etBeratMuatanPertama.text.toString().toInt()
-            val secondWeight = etBeratMuatanKedua.text.toString().toInt()
+            val firstWeight = etBeratMuatanPertama.text.toString()
+            val secondWeight = if (ticketStatus != FIRST_WEIGHT) {
+                etBeratMuatanKedua.text.toString()
+            } else NOT_EDITED
             val firstWeightOn = etWaktuTimbangPertama.text.toString()
             val secondWeightOn = etWaktuTimbangKedua.text.toString()
-            val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
+            val status = if (ticketStatus != FIRST_WEIGHT) "Outbound" else "Inbound"
             val combString = "$driverName$licenseNumber$currentDateTime"
             validatedTicket = Ticket(
                 id = generateUniqueId(combString),
@@ -559,6 +551,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     companion object {
         private const val FIRST_PHOTO = "FIRST"
         private const val SECOND_PHOTO = "SECOND"
+        const val NOT_EDITED = "Belum Terisi"
         const val FIRST_WEIGHT = "first"
         const val SECOND_WEIGHT = "second"
         const val DONE = "done"
@@ -587,7 +580,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             status: String,
             data: Ticket? = null,
             isRequested: Boolean = false
-        ) : Intent {
+        ): Intent {
             ticketStatus = status
             ticketData = data
             isEditRequested = isRequested

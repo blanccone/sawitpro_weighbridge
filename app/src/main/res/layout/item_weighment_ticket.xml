@@ -184,8 +184,7 @@
                 android:text=":"
                 android:textStyle="bold"
                 android:textColor="@color/color_primary"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/tv_berat_keluar_label"
+                app:layout_constraintStart_toStartOf="@id/tv_berat_masuk_colon"
                 app:layout_constraintTop_toTopOf="@id/tv_berat_keluar_label"
                 app:layout_constraintBottom_toBottomOf="@id/tv_berat_keluar_label" />
 

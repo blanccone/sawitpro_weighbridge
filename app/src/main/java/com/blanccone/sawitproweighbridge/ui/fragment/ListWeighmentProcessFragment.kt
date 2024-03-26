@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -17,7 +16,7 @@ import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
 import com.blanccone.core.ui.widget.FilterBottomSheet
-import com.blanccone.core.util.FileUtils
+import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.stopRefresh
@@ -40,9 +39,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ListWeighmentProcessFragment(
-    private val ticketStatus: String
-): CoreFragment<LayoutListWeighmentTicketBinding>() {
+class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
 
     private val viewModel: WeighmentViewModel by viewModels()
 
@@ -61,6 +58,8 @@ class ListWeighmentProcessFragment(
     private var validatedTicket = Ticket()
     private var validatedImage = WeightImage()
 
+    private lateinit var ticketStatus: String
+
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             getActivityResult(it)
@@ -78,11 +77,13 @@ class ListWeighmentProcessFragment(
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ticketStatus = arguments?.getString("ticketStatus") ?: ""
         setTicketListView()
         setFilterListView()
         setEvent()
         setObserves()
-        fetchFromFirebase()
+        setObservesFirebase()
+        fetchFromLocal()
     }
 
     private fun setObserves() {
@@ -113,18 +114,22 @@ class ListWeighmentProcessFragment(
                 break
             }
         }
-        viewModel.insertTicketSuccessful.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) storeImageToLocal(it)
+        viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
+            it?.let { isSuccessful ->
+                if (isSuccessful) updateImageToLocal()
+            }
         }
-        viewModel.insertImageSuccessful.observe(viewLifecycleOwner) {
-            if (it) {
-                toast("Data berhasil tersimpan")
-                fetchFromLocal()
+        viewModel.updateImageSuccessful.observe(viewLifecycleOwner) {
+            it?.let { isSuccessful ->
+                if (isSuccessful) {
+                    toast("Data berhasil tersimpan ke Second Weight")
+                    fetchFromLocal()
+                }
             }
         }
     }
 
-    private fun fetchFromFirebase() {
+    private fun setObservesFirebase() {
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
@@ -137,7 +142,6 @@ class ListWeighmentProcessFragment(
                         }
                     }
                 }
-                binding.rvFilter.isVisible = tickets.isNotEmpty()
                 if (tickets.isNotEmpty()) {
                     updateTicketsToLocal(tickets)
                     binding.srlRefresh.stopRefresh()
@@ -164,6 +168,7 @@ class ListWeighmentProcessFragment(
 
     private fun updateTicketList(dataList: List<Ticket>) {
         ticketAdapter.updateTickets(dataList)
+        binding.rvFilter.isVisible = dataList.isNotEmpty()
     }
 
     private fun updateFilterList() {
@@ -181,11 +186,8 @@ class ListWeighmentProcessFragment(
     private fun setEvent() {
         with(binding) {
             srlRefresh.setOnRefreshListener {
-                if (!Utils.isConnected(requireContext())) {
-                    fetchFromLocal()
-                } else {
-                    fetchFromFirebase()
-                }
+                srlRefresh.isRefreshing = false
+                fetchFromLocal()
             }
             with(layoutSearch) {
                 etSearch.doAfterTextChanged {
@@ -249,7 +251,7 @@ class ListWeighmentProcessFragment(
             .putFile(imageUri)
             .addOnSuccessListener {
                 toast("Data berhasil tersimpan")
-                storeDataToLocal()
+                updateDataToLocal()
             }
             .addOnFailureListener {
                 showLoading(false)
@@ -257,19 +259,19 @@ class ListWeighmentProcessFragment(
             }
     }
 
-    private fun storeDataToLocal() {
-        viewModel.insertTicket(validatedTicket)
+    private fun updateDataToLocal() {
+        viewModel.updateTicket(validatedTicket)
     }
 
-    private fun storeImageToLocal(ticketId: String) {
+    private fun updateImageToLocal() {
         val image = WeightImage(
             id = "${validatedTicket.id}_$ticketStatus",
-            ticketId = ticketId,
+            ticketId = "${validatedTicket.id}",
             image = validatedImage.image,
             imageName = validatedImage.imageName,
             imagePath = validatedImage.imagePath
         )
-        viewModel.insertImage(image)
+        viewModel.updateImage(image)
     }
 
     private fun showFilterBottomSheet() {
@@ -328,12 +330,27 @@ class ListWeighmentProcessFragment(
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.srlRefresh.isRefreshing = isLoading
+        if (isLoading) {
+            LoadingDialog.showDialog(childFragmentManager)
+        } else {
+            LoadingDialog.dismissDialog(childFragmentManager)
+        }
     }
 
     private fun getActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             fetchFromLocal()
+        }
+    }
+
+    companion object {
+        fun newInstance(status: String): ListWeighmentProcessFragment {
+            val args = Bundle().apply {
+                putString("ticketStatus", status)
+            }
+            return ListWeighmentProcessFragment().apply {
+                arguments = args
+            }
         }
     }
 }

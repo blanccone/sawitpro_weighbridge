@@ -40,8 +40,8 @@ class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
 
     private fun setViewPager() {
         val viewPagerAdapter = ViewPagerAdapter(this).apply {
-            addFragment(ListWeighmentProcessFragment(FIRST_WEIGHT), "First Weight")
-            addFragment(ListWeighmentProcessFragment(SECOND_WEIGHT), "Second Weight")
+            addFragment(ListWeighmentProcessFragment.newInstance(FIRST_WEIGHT), "First Weight")
+            addFragment(ListWeighmentProcessFragment.newInstance(SECOND_WEIGHT), "Second Weight")
         }
         with(binding) {
             vpTicket.adapter = viewPagerAdapter

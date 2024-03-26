@@ -53,11 +53,8 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         setMenu()
         setEvent()
         setObserves()
-        if (!Utils.isConnected(this)) {
-            fetchFromLocal()
-        } else {
-            fetchFromFirebase()
-        }
+        setFirebaseObserves()
+        fetchFromLocal()
     }
 
     private fun setObserves() {
@@ -71,7 +68,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         }
     }
 
-    private fun fetchFromFirebase() {
+    private fun setFirebaseObserves() {
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
@@ -125,11 +122,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
         }
         with(binding) {
             srlRefresh.setOnRefreshListener {
-                if (!Utils.isConnected(this@HomeActivity)) {
-                    fetchFromLocal()
-                } else {
-                    fetchFromFirebase()
-                }
+                fetchFromLocal()
             }
         }
     }

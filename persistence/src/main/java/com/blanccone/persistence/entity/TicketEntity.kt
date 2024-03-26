@@ -11,8 +11,8 @@ internal data class TicketEntity(
     var id: String,
     val licenseNumber: String? = "",
     val driverName: String? = "",
-    val firstWeight: Int? = 0,
-    val secondWeight: Int? = 0,
+    val firstWeight: String? = "",
+    val secondWeight: String? = "",
     val firstWeighedOn: String? = "",
     val secondWeighedOn: String? = "",
     val status: String? = ""
