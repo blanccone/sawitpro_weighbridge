@@ -33,6 +33,7 @@ import com.blanccone.core.util.Utils.getCurrentDateTime
 import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.backgroundTint
+import com.blanccone.core.util.ViewUtils.hide
 import com.blanccone.core.util.ViewUtils.removeError
 import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.core.util.ViewUtils.stateError
@@ -587,6 +588,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         with(binding) {
             iuvImageBeratMuatanFirst.isPreviewOnly = true
             iuvImageBeratMuatanSecond.isPreviewOnly = true
+            cslFooter.hide()
         }
     }
 
