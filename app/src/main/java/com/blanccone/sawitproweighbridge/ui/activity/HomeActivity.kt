@@ -97,10 +97,12 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     private fun setView(tickets: List<Ticket>) {
         val inboundTickets = tickets.filter { ticket -> ticket.status == "Inbound" }
         val outboundTickets = tickets.filter { ticket -> ticket.status == "Outbound" }
+        val doneTickets = tickets.filter { ticket -> ticket.status == "Outbound" }
         with(binding) {
             srlRefresh.stopRefresh()
-            tvFirstWeight.text = inboundTickets.size.toString()
-            tvSecondWeight.text = outboundTickets.size.toString()
+            tvFirstWeight.text = "${inboundTickets.size} Tickets"
+            tvSecondWeight.text = "${outboundTickets.size} Tickets"
+            tvDone.text = "${doneTickets.size} Tickets"
         }
     }
 

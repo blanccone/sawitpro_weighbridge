@@ -95,7 +95,7 @@
                         android:textColor="@color/color_text"
                         android:textSize="16sp"
                         app:layout_constraintTop_toBottomOf="@id/tv_first_weight_title"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tv_done_title"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/divider_1"/>
 
@@ -135,10 +135,40 @@
                         android:text="0 Tickets"
                         android:textColor="@color/color_text"
                         android:textSize="16sp"
+                        app:layout_constraintBottom_toTopOf="@id/tv_done_title"
                         app:layout_constraintTop_toBottomOf="@id/tv_second_weight_title"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/divider_1"
                         app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_done_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="Done"
+                        android:textColor="@color/color_text"
+                        android:textSize="14sp"
+                        app:drawableStartCompat="@drawable/ic_inbound_24"
+                        app:drawableTint="@color/color_primary"
+                        app:layout_constraintTop_toBottomOf="@id/divider_1"
+                        app:layout_constraintBottom_toTopOf="@id/tv_done"
+                        app:layout_constraintStart_toStartOf="@id/tv_second_weight"
+                        app:layout_constraintEnd_toEndOf="@id/tv_second_weight"/>
+
+                    <TextView
+                        android:id="@+id/tv_done"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="0 Tickets"
+                        android:textColor="@color/color_text"
+                        android:textSize="16sp"
+                        app:layout_constraintTop_toBottomOf="@id/divider_1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/tv_first_weight"
+                        app:layout_constraintEnd_toEndOf="@id/tv_second_weight"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
