@@ -144,7 +144,8 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
                 EFormWeighmentActivity.newInstance(
                     context = this,
                     status = EFormWeighmentActivity.DONE,
-                    data = it.ticket
+                    data = it.ticket,
+                    isPreviewOnly = true
                 )
             }
         }
