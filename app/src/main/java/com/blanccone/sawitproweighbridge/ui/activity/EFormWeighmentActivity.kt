@@ -147,6 +147,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         viewModel.insertImageSuccessful.observe(this) {
             if (it) {
                 toast("Data berhasil tersimpan")
+                setResult(Activity.RESULT_OK)
                 finish()
             }
         }

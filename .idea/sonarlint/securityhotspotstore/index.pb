@@ -21,3 +21,5 @@ t
 Dcore/src/main/java/com/blanccone/core/ui/widget/ImageUploaderView.kt,9/0/90547f31de16ef5626181588946c4abfcfbf0f12
 
 Oapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/HomeActivity.kt,6/a/6a637d9bad445018315a8567d04ed53b6526ef0c
+è
+_persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e/b/ebd44b47a66c279845b82439d664c55afe9aded5

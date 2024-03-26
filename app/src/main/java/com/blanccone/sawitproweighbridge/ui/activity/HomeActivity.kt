@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,6 +12,7 @@ import androidx.activity.viewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.util.Utils
+import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.ActivityHomeBinding
 import com.blanccone.sawitproweighbridge.ui.HomeMenuAdapter
@@ -34,6 +36,11 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
 
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            getActivityResult(it)
+        }
 
     override fun inflateLayout(inflater: LayoutInflater): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(inflater)
@@ -66,7 +73,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     }
 
     private fun setFirebaseObserves() {
-        firebaseDb.addValueEventListener(object : ValueEventListener {
+        firebaseDb.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
                 for (ticketSnapshot in snapshot.children) {
@@ -111,7 +118,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     private fun setEvent() {
         homeMenuAdapter.setOnItemClickListener {
             if (it == "tickets123") {
-                ListTicketActivity.newInstance(this)
+                resultLauncher.launch(ListTicketActivity.resultInstance(this))
             } else {
                 ListWeighmentResultActivity.newInstance(this)
             }
@@ -120,6 +127,13 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
             srlRefresh.setOnRefreshListener {
                 fetchFromLocal()
             }
+        }
+    }
+
+    private fun getActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("BAJINGAN", "RESULT_HOME")
+            fetchFromLocal()
         }
     }
 

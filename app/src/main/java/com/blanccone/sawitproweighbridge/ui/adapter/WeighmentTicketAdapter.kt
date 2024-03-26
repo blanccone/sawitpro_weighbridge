@@ -1,5 +1,6 @@
 package com.blanccone.sawitproweighbridge.ui.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -99,10 +100,11 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
     override fun getItemCount(): Int = tickets.size
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateTickets(dataList: List<Ticket>) {
         tickets.clear()
         tickets.addAll(dataList)
-        notifyItemRangeChanged(0, tickets.size)
+        notifyDataSetChanged()
     }
 
     private var onItemClickListener: ((ItemData) -> Unit)? = null

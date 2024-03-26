@@ -87,9 +87,8 @@ class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
 
     companion object {
 
-        fun newInstance(context: Context) {
-            val intent = Intent(context, ListTicketActivity::class.java)
-            context.startActivity(intent)
+        fun resultInstance(context: Context) : Intent {
+            return Intent(context, ListTicketActivity::class.java)
         }
     }
 }

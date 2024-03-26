@@ -78,7 +78,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
     }
 
     private fun setFirebaseObserves() {
-        firebaseDb.addValueEventListener(object : ValueEventListener {
+        firebaseDb.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
                 for (ticketSnapshot in snapshot.children) {

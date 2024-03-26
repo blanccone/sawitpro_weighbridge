@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
@@ -39,7 +39,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBinding>() {
 
-    private val viewModel: WeighmentViewModel by activityViewModels()
+    private val viewModel: WeighmentViewModel by viewModels()
 
     private val filterAdapter by lazy { FilterChipAdapter() }
     private val ticketAdapter by lazy { WeighmentTicketAdapter() }
@@ -56,6 +56,11 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     private var validatedTicket = Ticket()
 
     private lateinit var ticketStatus: String
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            getActivityResult(it)
+        }
 
     override fun inflateLayout(
         inflater: LayoutInflater,
@@ -104,6 +109,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                         toast("Data berhasil tersimpan ke Second Weight")
                         fetchFromLocal()
                     } else {
+                        toast("Data berhasil tersimpan ke Result List")
                         requireActivity().apply {
                             setResult(Activity.RESULT_OK)
                             finish()
@@ -115,7 +121,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun setFirebaseObserves() {
-        firebaseDb.addValueEventListener(object : ValueEventListener {
+        firebaseDb.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
                 val status = if (ticketStatus == FIRST_WEIGHT) "Inbound" else "Outbound"
@@ -192,12 +198,15 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                     isPreviewOnly = true
                 )
 
-                WeighmentTicketAdapter.ACTION_EDIT -> EFormWeighmentActivity.newInstance(
-                    context = requireContext(),
-                    status = ticketStatus,
-                    data = it.ticket,
-                    isRequested = true
-                )
+                WeighmentTicketAdapter.ACTION_EDIT -> {
+                    val intent = EFormWeighmentActivity.resultInstance(
+                        context = requireContext(),
+                        status = ticketStatus,
+                        data = it.ticket,
+                        isRequested = true
+                    )
+                    resultLauncher.launch(intent)
+                }
 
                 WeighmentTicketAdapter.ACTION_SUBMIT -> {
                     ActionBottomSheetDialog.showDialog(childFragmentManager, "Submit").apply {
@@ -294,6 +303,13 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             LoadingDialog.showDialog(childFragmentManager)
         } else {
             LoadingDialog.dismissDialog(childFragmentManager)
+        }
+    }
+
+    private fun getActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("BAJINGAN", "RESULT_LIST")
+            fetchFromLocal()
         }
     }
 
