@@ -151,7 +151,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 }
                 if (tickets.isNotEmpty()) {
                     updateTicketsToLocal(tickets)
-                    binding.srlRefresh.stopRefresh()
                 } else {
                     fetchFromLocal()
                 }
