@@ -58,7 +58,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         setFilterListView()
         setEvent()
         setObserves()
-        setObservesFirebase()
+        setFirebaseObserves()
         fetchFromLocal()
     }
 
@@ -76,7 +76,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         }
     }
 
-    private fun setObservesFirebase() {
+    private fun setFirebaseObserves() {
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()

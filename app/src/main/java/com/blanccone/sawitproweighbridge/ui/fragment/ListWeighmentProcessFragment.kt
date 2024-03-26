@@ -74,7 +74,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
         setFilterListView()
         setEvent()
         setObserves()
-        setObservesFirebase()
+        setFirebaseObserves()
         fetchFromLocal()
     }
 
@@ -114,7 +114,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
         }
     }
 
-    private fun setObservesFirebase() {
+    private fun setFirebaseObserves() {
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()

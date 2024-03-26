@@ -72,9 +72,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
                 for (ticketSnapshot in snapshot.children) {
                     val ticket = ticketSnapshot.getValue(Ticket::class.java)
                     ticket?.let {
-                        if (ticket.status == "Done") {
-                            tickets.add(it)
-                        }
+                        tickets.add(it)
                     }
                 }
                 setView(tickets)
