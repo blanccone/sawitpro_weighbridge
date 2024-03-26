@@ -2,6 +2,7 @@ package com.blanccone.sawitproweighbridge.ui.fragment
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,11 +56,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     private var validatedTicket = Ticket()
 
     private lateinit var ticketStatus: String
-
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            getActivityResult(it)
-        }
 
     override fun inflateLayout(
         inflater: LayoutInflater,
@@ -133,6 +129,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 }
                 if (tickets.isNotEmpty()) {
                     updateTicketsToLocal(tickets)
+                    updateTicketList(tickets)
                 } else {
                     fetchFromLocal()
                 }
@@ -195,15 +192,12 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                     isPreviewOnly = true
                 )
 
-                WeighmentTicketAdapter.ACTION_EDIT -> {
-                    val intent = EFormWeighmentActivity.resultInstance(
-                        context = requireContext(),
-                        status = ticketStatus,
-                        data = it.ticket,
-                        isRequested = true
-                    )
-                    resultLauncher.launch(intent)
-                }
+                WeighmentTicketAdapter.ACTION_EDIT -> EFormWeighmentActivity.newInstance(
+                    context = requireContext(),
+                    status = ticketStatus,
+                    data = it.ticket,
+                    isRequested = true
+                )
 
                 WeighmentTicketAdapter.ACTION_SUBMIT -> {
                     ActionBottomSheetDialog.showDialog(childFragmentManager, "Submit").apply {
@@ -300,13 +294,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             LoadingDialog.showDialog(childFragmentManager)
         } else {
             LoadingDialog.dismissDialog(childFragmentManager)
-        }
-    }
-
-    private fun getActivityResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
-            toast("reload")
-            fetchFromLocal()
         }
     }
 

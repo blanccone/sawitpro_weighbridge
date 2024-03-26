@@ -35,11 +35,6 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     @Inject
     internal lateinit var firebaseDb: DatabaseReference
 
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            getActivityResult(it)
-        }
-
     override fun inflateLayout(inflater: LayoutInflater): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(inflater)
     }
@@ -62,7 +57,11 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
             }
         }
         viewModel.tickets.observe(this) {
-            setView(it)
+            tickets.apply {
+                clear()
+                addAll(it)
+            }
+            setView(tickets)
         }
     }
 
@@ -79,7 +78,6 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
                     }
                 }
                 setView(tickets)
-                binding.srlRefresh.stopRefresh()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -115,7 +113,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     private fun setEvent() {
         homeMenuAdapter.setOnItemClickListener {
             if (it == "tickets123") {
-                resultLauncher.launch(ListTicketActivity.resultInstance(this))
+                ListTicketActivity.newInstance(this)
             } else {
                 ListWeighmentResultActivity.newInstance(this)
             }
@@ -124,12 +122,6 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
             srlRefresh.setOnRefreshListener {
                 fetchFromLocal()
             }
-        }
-    }
-
-    private fun getActivityResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
-            fetchFromLocal()
         }
     }
 

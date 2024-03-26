@@ -68,7 +68,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     private var fileImage: File? = null
     private var imageFieldName = ""
 
-    private var fields = hashMapOf<TextInputLayout, View>()
+    private var fields = hashMapOf<TextInputLayout, TextInputEditText>()
 
     private var validatedTicket = Ticket()
 
@@ -147,7 +147,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         viewModel.insertImageSuccessful.observe(this) {
             if (it) {
                 toast("Data berhasil tersimpan")
-                setResult(Activity.RESULT_OK)
                 finish()
             }
         }
@@ -156,7 +155,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             it?.let { isSuccessful ->
                 if (isSuccessful) {
                     toast("Data berhasil tersimpan")
-                    setResult(Activity.RESULT_OK)
                     finish()
                 }
             }
@@ -196,9 +194,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 tilNama to etNama,
                 tilBeratMasuk to etBeratMasuk
             )
-            if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
-                fields[tilBeratKeluar] = etBeratKeluar
-            }
             etNoPol.apply {
                 filters = arrayOf(InputFilter.AllCaps())
                 doAfterTextChanged {
@@ -247,6 +242,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
                 isEditRequested && ticketStatus == SECOND_WEIGHT -> {
                     setAutoFillDefault()
+                    disableView()
+                    if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
+                        fields[tilBeratKeluar] = etBeratKeluar
+                    }
                     ticketData?.let {
                         with(it) {
                             tilWaktuTimbangKedua.show()
@@ -262,12 +261,15 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                             etBeratKeluar.setText(secondWeight)
                             tilBeratBersih.isVisible = secondWeight != NOT_EDITED
                             etBeratBersih.setText(
-                                getNettWeight(
-                                    firstWeight.toString(),
-                                    secondWeight.toString()
-                                )
+                                if (secondWeight != NOT_EDITED) {
+                                    getNettWeight(
+                                        firstWeight.toString(),
+                                        secondWeight.toString()
+                                    )
+                                } else {
+                                    firstWeight
+                                }
                             )
-                            iuvImageBeratKeluar.isVisible = ticketStatus == SECOND_WEIGHT
                         }
                     }
                     iuvImageBeratMasuk.isPreviewOnly = true
@@ -633,11 +635,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         var isValid = true
         var message = "Mohon lengkapi data"
         for ((til, et) in fields) {
-            if (et is TextInputEditText && et.text.isNullOrBlank()) {
-                til.stateError()
-                isValid = false
-            }
-            if (et is AppCompatAutoCompleteTextView && et.text.isNullOrBlank()) {
+            if (et.text.isNullOrBlank()) {
                 til.stateError()
                 isValid = false
             }

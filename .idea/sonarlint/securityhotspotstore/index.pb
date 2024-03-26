@@ -19,3 +19,5 @@ c
 3core/src/main/java/com/blanccone/core/util/Utils.kt,d/7/d7f0784a37b9b38559e32e8f3fdba4114a489bec
 t
 Dcore/src/main/java/com/blanccone/core/ui/widget/ImageUploaderView.kt,9/0/90547f31de16ef5626181588946c4abfcfbf0f12
+
+Oapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/HomeActivity.kt,6/a/6a637d9bad445018315a8567d04ed53b6526ef0c
