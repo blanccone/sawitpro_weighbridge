@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.sawitproweighbridge.databinding.ItemWeighmentTicketBinding
+import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.NOT_EDITED
 
 
 @SuppressLint("NotifyDataSetChanged")
@@ -48,8 +49,11 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
                 onItemClickListener?.let { it(ItemData(ACTION_EDIT, ticket)) }
             }
 
-            btnSubmit.setOnClickListener {
-                onItemClickListener?.let { it(ItemData(ACTION_SUBMIT, ticket)) }
+            btnSubmit.apply {
+                isVisible = ticket.status != "Outbound" && tvBeratKeluar.text.toString() != NOT_EDITED
+                setOnClickListener {
+                    onItemClickListener?.let { it(ItemData(ACTION_SUBMIT, ticket)) }
+                }
             }
 
             root.setOnClickListener {

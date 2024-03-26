@@ -93,7 +93,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
-        currentDateTime = if (!isEditRequested && ticketStatus != DONE) {
+        currentDateTime = if (ticketData?.secondWeight == NOT_EDITED ||
+            (!isEditRequested && ticketStatus != DONE)) {
             getCurrentDateTime("ddMMyyyyHHmmssSS")
         } else ""
 
@@ -187,33 +188,30 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     }
                 }
 
-                isEditRequested && ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) -> {
+                isEditRequested && ticketStatus == SECOND_WEIGHT -> {
                     setAutoFillDefault()
                     ticketData?.let {
                         with(it) {
-                            tilBeratMuatanKedua.isVisible = ticketStatus == SECOND_WEIGHT
-                            etBeratMuatanKedua.setText(secondWeight.toString())
-                            tilWaktuTimbangKedua.isVisible = ticketStatus == SECOND_WEIGHT
-                            etWaktuTimbangKedua.setText(secondWeighedOn)
+                            tilBeratMuatanKedua.show()
+                            etBeratMuatanKedua.setText(secondWeight)
+                            tilWaktuTimbangKedua.show()
+                            etWaktuTimbangKedua.setText(
+                                if (secondWeight == NOT_EDITED) {
+                                    currentDateTime.reformatDate(
+                                        "ddMMyyyyHHmmssSS",
+                                        "dd/MM/yyyy HH:mm:ss"
+                                    )
+                                } else secondWeighedOn
+                            )
                             iuvImageBeratMuatanSecond.isVisible = ticketStatus == SECOND_WEIGHT
                         }
                     }
-                }
-
-                ticketStatus == SECOND_WEIGHT -> {
-                    setAutoFillDefault()
-                    tilBeratMuatanKedua.show()
-                    etWaktuTimbangKedua.apply {
-                        show()
-                        setText(
-                            currentDateTime.reformatDate(
-                                "ddMMyyyyHHmmssSS",
-                                "dd/MM/yyyy HH:mm:ss"
-                            )
-                        )
-                    }
                     iuvImageBeratMuatanFirst.isPreviewOnly = true
                     iuvImageBeratMuatanSecond.show()
+                }
+
+                isEditRequested && ticketStatus == FIRST_WEIGHT -> {
+                    setAutoFillDefault()
                 }
 
                 else -> etWaktuTimbangPertama.setText(
