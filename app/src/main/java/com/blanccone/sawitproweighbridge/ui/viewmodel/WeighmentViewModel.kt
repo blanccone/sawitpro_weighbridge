@@ -58,7 +58,6 @@ class WeighmentViewModel @Inject constructor(
     val images: LiveData<List<WeightImage>> = _images
     fun getimages(ticketId: String) = viewModelScope.launch {
         persistenceRepository.getImages(ticketId).collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
                 is Resource.Success -> _images.postValue(it.data ?: emptyList())
                 is Resource.Error -> {
