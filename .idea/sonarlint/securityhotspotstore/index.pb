@@ -49,8 +49,6 @@ t
 Dcore/src/main/java/com/blanccone/core/ui/widget/FilterBottomSheet.kt,7/7/77e390846d877be58191174c6b926137d4e9d752
 z
 Jcore/src/main/java/com/blanccone/core/ui/widget/ImageOptionsBottomSheet.kt,9/d/9dd62dc1186b7bfa3bde34d61810f264a76c072d
-Ž
-^app/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/ListWeighmentResultActivity.kt,8/9/89cba78d9f690efe79b03e677205e97e8d83421a
 ]
 -.idea/sonarlint/securityhotspotstore/index.pb,8/8/88a9255124c95bdc913197c120a8d560edc59c8e
 w
