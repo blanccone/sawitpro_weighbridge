@@ -119,7 +119,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         }
 
         viewModel.insertTicketSuccessful.observe(this) {
-            if (!it.isNullOrEmpty()) storeImageToLocal(it)
+            if (!it.isNullOrEmpty()) {
+                if (!isEditRequested) {
+                    storeImageToLocal(it)
+                } else {
+                    updateImageToLocal(it)
+                }
+            }
         }
 
         viewModel.insertImageSuccessful.observe(this) {
@@ -463,7 +469,11 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 .child(fileName)
                 .putFile(fileUri!!)
                 .addOnSuccessListener {
-                    storeDataToLocal()
+                    if (!isEditRequested) {
+                        storeDataToLocal()
+                    } else {
+                        updateDataToLocal()
+                    }
                 }
                 .addOnFailureListener {
                     showLoading(false)
@@ -485,6 +495,21 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             imagePath = filePath
         )
         viewModel.insertImage(image)
+    }
+
+    private fun updateDataToLocal() {
+        viewModel.updateTicket(validatedTicket)
+    }
+
+    private fun updateImageToLocal(ticketId: String) {
+        val image = WeightImage(
+            id = "${validatedTicket.id}_$ticketStatus",
+            ticketId = ticketId,
+            image = FileUtils.fileToByteArray(fileImage!!),
+            imageName = FileUtils.getFileName(filePath!!),
+            imagePath = filePath
+        )
+        viewModel.updateImage(image)
     }
 
     private fun isImageReady(ticketId: String): Boolean {
