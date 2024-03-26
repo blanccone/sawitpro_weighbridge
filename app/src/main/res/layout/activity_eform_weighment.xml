@@ -86,7 +86,7 @@
                             android:paddingEnd="0dp"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
                             android:inputType="textCapCharacters"
-                            android:imeOptions="actionNext"
+                            android:imeOptions="actionDone"
                             android:maxLength="10"
                             android:maxLines="1"/>
 
@@ -199,16 +199,16 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_berat_muatan_pertama"
+                        android:id="@+id/til_berat_masuk"
                         style="@style/MainTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginBottom="8dp"
-                        android:hint="Berat Muatan Pertama (Kg)">
+                        android:hint="Berat Masuk (Kg)">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_berat_muatan_pertama"
+                            android:id="@+id/et_berat_masuk"
                             style="@style/MainEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -224,16 +224,16 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:visibility="gone"
-                        android:id="@+id/til_berat_muatan_kedua"
+                        android:id="@+id/til_berat_keluar"
                         style="@style/MainTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginBottom="8dp"
-                        android:hint="Berat Muatan Kedua (Kg)">
+                        android:hint="Berat Keluar (Kg)">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_berat_muatan_kedua"
+                            android:id="@+id/et_berat_keluar"
                             style="@style/MainEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -244,6 +244,31 @@
                             android:maxLines="1"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:visibility="gone"
+                        android:id="@+id/til_berat_bersih"
+                        style="@style/MainTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Berat Bersih (Kg)">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_berat_bersih"
+                            style="@style/MainEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="1234567890"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            app:backgroundTint="@color/grey5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -274,17 +299,18 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginHorizontal="12dp"
-                        android:layout_marginVertical="8dp" />
+                        android:layout_marginTop="8dp" />
 
                     <com.blanccone.core.ui.widget.ImageUploaderView
-                        android:id="@+id/iuv_image_berat_muatan_first"
+                        android:id="@+id/iuv_image_berat_masuk"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:layout_marginHorizontal="12dp"/>
 
                     <com.blanccone.core.ui.widget.ImageUploaderView
                         android:visibility="gone"
-                        android:id="@+id/iuv_image_berat_muatan_second"
+                        android:id="@+id/iuv_image_berat_keluar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

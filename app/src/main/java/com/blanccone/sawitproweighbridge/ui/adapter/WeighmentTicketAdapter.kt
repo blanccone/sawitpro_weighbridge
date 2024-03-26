@@ -74,7 +74,7 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
     private fun getNettWeight(ticket: Ticket): String {
         var nettWeight = 0
         with(ticket) {
-            if (isEditedOutbound(this)) {
+            if (isEditedOutbound(this) || status == DONE) {
                 nettWeight = firstWeight.toString().toInt() - secondWeight.toString().toInt()
             }
         }

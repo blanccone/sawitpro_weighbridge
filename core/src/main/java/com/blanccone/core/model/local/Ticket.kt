@@ -6,7 +6,6 @@ data class Ticket(
     var driverName: String? = "",
     var firstWeight: String? = "",
     var secondWeight: String? = "",
-    var nettWeight: String? = "",
     var firstWeighedOn: String? = "",
     var secondWeighedOn: String? = "",
     var status: String? = ""

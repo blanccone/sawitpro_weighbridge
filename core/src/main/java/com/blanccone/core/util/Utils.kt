@@ -108,4 +108,9 @@ object Utils {
     fun Fragment.toast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
+
+    fun String.isNumber(): Boolean {
+        val regex = Regex("[0-9]+")
+        return regex.matches(this)
+    }
 }

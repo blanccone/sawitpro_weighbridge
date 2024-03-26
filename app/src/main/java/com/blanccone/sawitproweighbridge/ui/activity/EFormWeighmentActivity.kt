@@ -30,6 +30,7 @@ import com.blanccone.core.util.FileUtils
 import com.blanccone.core.util.Utils
 import com.blanccone.core.util.Utils.generateUniqueId
 import com.blanccone.core.util.Utils.getCurrentDateTime
+import com.blanccone.core.util.Utils.isNumber
 import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.backgroundTint
@@ -39,6 +40,7 @@ import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
+import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -191,10 +193,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             fields = hashMapOf(
                 tilNoPol to etNoPol,
                 tilNama to etNama,
-                tilBeratMuatanPertama to etBeratMuatanPertama
+                tilBeratMasuk to etBeratMasuk
             )
             if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
-                fields[tilBeratMuatanKedua] = etBeratMuatanKedua
+                fields[tilBeratKeluar] = etBeratKeluar
             }
             etNoPol.doAfterTextChanged {
                 tilNoPol.removeError()
@@ -202,11 +204,16 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             etNama.doAfterTextChanged {
                 tilNama.removeError()
             }
-            etBeratMuatanPertama.doAfterTextChanged {
-                tilBeratMuatanPertama.removeError()
+            etBeratMasuk.doAfterTextChanged {
+                tilBeratMasuk.removeError()
             }
-            etBeratMuatanKedua.doAfterTextChanged {
-                tilBeratMuatanKedua.removeError()
+            etBeratKeluar.doAfterTextChanged {
+                tilBeratKeluar.removeError()
+                val firstWeight = ticketData?.firstWeight.toString()
+                val secondWeight = it.toString()
+                if (tilBeratBersih.isVisible && it.toString().isNumber()) {
+                    etBeratBersih.setText(getNettWeight(firstWeight, secondWeight))
+                }
             }
         }
     }
@@ -218,11 +225,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     setAutoFillDefault()
                     ticketData?.let {
                         with(it) {
-                            tilBeratMuatanKedua.show()
-                            etBeratMuatanKedua.setText(secondWeight)
                             tilWaktuTimbangKedua.show()
                             etWaktuTimbangKedua.setText(secondWeighedOn)
-                            iuvImageBeratMuatanSecond.show()
+                            tilBeratKeluar.show()
+                            etBeratKeluar.setText(secondWeight)
+                            iuvImageBeratKeluar.show()
+                            tilBeratBersih.show()
+                            etBeratBersih.setText(getNettWeight(firstWeight.toString(), secondWeight.toString()))
                         }
                     }
                 }
@@ -231,8 +240,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     setAutoFillDefault()
                     ticketData?.let {
                         with(it) {
-                            tilBeratMuatanKedua.show()
-                            etBeratMuatanKedua.setText(secondWeight)
                             tilWaktuTimbangKedua.show()
                             etWaktuTimbangKedua.setText(
                                 if (secondWeight == NOT_EDITED) {
@@ -242,11 +249,15 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                                     )
                                 } else secondWeighedOn
                             )
-                            iuvImageBeratMuatanSecond.isVisible = ticketStatus == SECOND_WEIGHT
+                            tilBeratKeluar.show()
+                            etBeratKeluar.setText(secondWeight)
+                            tilBeratBersih.isVisible = secondWeight != NOT_EDITED
+                            etBeratBersih.setText(getNettWeight(firstWeight.toString(), secondWeight.toString()))
+                            iuvImageBeratKeluar.isVisible = ticketStatus == SECOND_WEIGHT
                         }
                     }
-                    iuvImageBeratMuatanFirst.isPreviewOnly = true
-                    iuvImageBeratMuatanSecond.show()
+                    iuvImageBeratMasuk.isPreviewOnly = true
+                    iuvImageBeratKeluar.show()
                 }
 
                 isEditRequested && ticketStatus == FIRST_WEIGHT -> {
@@ -260,22 +271,34 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     )
                 )
             }
-            iuvImageBeratMuatanFirst.apply {
+            iuvImageBeratMasuk.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
                 setImageName(
-                    "${getCurrentDateTime("ddMMyyyyHH")}_$FIRST_PHOTO",
+                    "${getCurrentDateTime("ddMMyyyyHH")}_${FIRST_WEIGHT.uppercase()}",
                     FIRST_PHOTO_LABEL
                 )
             }
-            iuvImageBeratMuatanSecond.apply {
+            iuvImageBeratKeluar.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
                 setImageName(
-                    "${getCurrentDateTime("ddMMyyyyHH")}_$SECOND_PHOTO",
+                    "${getCurrentDateTime("ddMMyyyyHH")}_${SECOND_WEIGHT.uppercase()}",
                     SECOND_PHOTO_LABEL
                 )
             }
             if (isPreviewRequested) disableView()
         }
+    }
+
+    private fun getNettWeight(firstWeight: String, secondWeight: String): String {
+        var nettWeight = 0
+        if (isEditedOutbound(secondWeight) || ticketStatus == DONE) {
+            nettWeight = firstWeight.toInt() - secondWeight.toInt()
+        }
+        return nettWeight.toString()
+    }
+
+    private fun isEditedOutbound(secondWeight: String): Boolean {
+        return ticketStatus == SECOND_WEIGHT && secondWeight != NOT_EDITED
     }
 
     private fun setAutoFillDefault() {
@@ -284,7 +307,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 with(it) {
                     etNoPol.setText(licenseNumber)
                     etNama.setText(driverName)
-                    etBeratMuatanPertama.setText(firstWeight.toString())
+                    etBeratMasuk.setText(firstWeight)
                     etWaktuTimbangPertama.setText(firstWeighedOn)
                 }
             }
@@ -295,30 +318,30 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         when {
             ticketStatus == DONE && images.size > 1 -> {
                 images[0].downloadUrl.addOnSuccessListener {
-                    binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                    binding.iuvImageBeratMasuk.loadFromFirebase(it)
                 }
                 images[1].downloadUrl.addOnSuccessListener {
-                    binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+                    binding.iuvImageBeratKeluar.loadFromFirebase(it)
                 }
             }
 
             isEditRequested && ticketStatus in setOf(FIRST_WEIGHT, SECOND_WEIGHT) -> {
                 if (images.size > 1) {
                     images[0].downloadUrl.addOnSuccessListener {
-                        binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                        binding.iuvImageBeratMasuk.loadFromFirebase(it)
                     }
                     images[1].downloadUrl.addOnSuccessListener {
-                        binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+                        binding.iuvImageBeratKeluar.loadFromFirebase(it)
                     }
                 } else {
                     images[0].downloadUrl.addOnSuccessListener {
-                        binding.iuvImageBeratMuatanFirst.loadFromFirebase(it)
+                        binding.iuvImageBeratMasuk.loadFromFirebase(it)
                     }
                 }
             }
 
             ticketStatus == SECOND_WEIGHT -> images[1].downloadUrl.addOnSuccessListener {
-                binding.iuvImageBeratMuatanSecond.loadFromFirebase(it)
+                binding.iuvImageBeratKeluar.loadFromFirebase(it)
             }
         }
     }
@@ -353,7 +376,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             )
             firstImagePath = file.absolutePath
         }
-        binding.iuvImageBeratMuatanFirst.setFilePath(firstImagePath)
+        binding.iuvImageBeratMasuk.setFilePath(firstImagePath)
     }
 
     private fun setSecondImage(image: WeightImage) {
@@ -366,12 +389,12 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             )
             secondImagePath = file.absolutePath
         }
-        binding.iuvImageBeratMuatanSecond.setFilePath(secondImagePath)
+        binding.iuvImageBeratKeluar.setFilePath(secondImagePath)
     }
 
     private fun setEvent() {
         with(binding) {
-            iuvImageBeratMuatanFirst.apply {
+            iuvImageBeratMasuk.apply {
                 setOnCameraListener {
                     imageFieldName = it
                     openCamera()
@@ -381,7 +404,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     fileUri = null
                 }
             }
-            iuvImageBeratMuatanSecond.apply {
+            iuvImageBeratKeluar.apply {
                 setOnCameraListener {
                     imageFieldName = it
                     openCamera()
@@ -436,9 +459,9 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
             with(binding){
                 if (ticketStatus == FIRST_WEIGHT) {
-                    iuvImageBeratMuatanFirst.setFilePath(filePath!!)
+                    iuvImageBeratMasuk.setFilePath(filePath!!)
                 } else{
-                    iuvImageBeratMuatanSecond.setFilePath(filePath!!)
+                    iuvImageBeratKeluar.setFilePath(filePath!!)
                 }
             }
         }
@@ -448,9 +471,9 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         with(binding) {
             val driverName = etNama.text.toString()
             val licenseNumber = etNoPol.text.toString()
-            val firstWeight = etBeratMuatanPertama.text.toString()
+            val firstWeight = etBeratMasuk.text.toString()
             val secondWeight = if (ticketStatus != FIRST_WEIGHT) {
-                etBeratMuatanKedua.text.toString()
+                etBeratKeluar.text.toString()
             } else NOT_EDITED
             val firstWeightOn = etWaktuTimbangPertama.text.toString()
             val secondWeightOn = etWaktuTimbangKedua.text.toString()
@@ -586,8 +609,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
         }
         with(binding) {
-            iuvImageBeratMuatanFirst.isPreviewOnly = true
-            iuvImageBeratMuatanSecond.isPreviewOnly = true
+            iuvImageBeratMasuk.isPreviewOnly = true
+            iuvImageBeratKeluar.isPreviewOnly = true
             cslFooter.hide()
         }
     }
@@ -606,11 +629,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
         }
         with(binding) {
-            val regex = Regex("[0-9]+")
-            val beratMuatanKedua = etBeratMuatanKedua.text.toString()
-            if (isValid && ticketStatus == SECOND_WEIGHT && !regex.matches(beratMuatanKedua)) {
-                tilBeratMuatanKedua.stateError("Berat muatan tidak valid")
-                etBeratMuatanKedua.requestFocus()
+            val secondWeight = etBeratKeluar.text.toString()
+            if (isValid && ticketStatus == SECOND_WEIGHT && !secondWeight.isNumber()) {
+                tilBeratKeluar.stateError("Berat muatan tidak valid")
+                etBeratKeluar.requestFocus()
                 message = "Data tidak valid"
                 isValid = false
             }
@@ -633,10 +655,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     }
 
     companion object {
-        private const val FIRST_PHOTO = "FIRST"
-        private const val SECOND_PHOTO = "SECOND"
-        private const val FIRST_PHOTO_LABEL = "Foto Berat Muatan Pertama"
-        private const val SECOND_PHOTO_LABEL = "Foto Berat Muatan Kedua"
+        private const val FIRST_PHOTO_LABEL = "Foto Berat Masuk"
+        private const val SECOND_PHOTO_LABEL = "Foto Berat Keluar"
         const val NOT_EDITED = "Belum Terisi"
         const val FIRST_WEIGHT = "first"
         const val SECOND_WEIGHT = "second"
