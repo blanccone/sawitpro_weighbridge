@@ -82,7 +82,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ticketStatus = arguments?.getString("ticketStatus") ?: ""
         updatedTicketStatus = if (ticketStatus == FIRST_WEIGHT) SECOND_WEIGHT else DONE
-        toast(ticketStatus)
         setTicketListView()
         setFilterListView()
         setEvent()
