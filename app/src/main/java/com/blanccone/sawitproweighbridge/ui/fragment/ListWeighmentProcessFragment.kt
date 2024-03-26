@@ -15,6 +15,7 @@ import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.model.local.WeightImage
 import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.fragment.CoreFragment
+import com.blanccone.core.ui.widget.ActionBottomSheetDialog
 import com.blanccone.core.ui.widget.FilterBottomSheet
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
@@ -159,7 +160,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun fetchFromLocal() {
-        viewModel.gettickets()
+        viewModel.getTickets()
     }
 
     private fun updateTicketsToLocal(dataList: List<Ticket>) {
@@ -217,7 +218,13 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                     resultLauncher.launch(intent)
                 }
 
-                WeighmentTicketAdapter.ACTION_SUBMIT -> setData(it.ticket)
+                WeighmentTicketAdapter.ACTION_SUBMIT -> {
+                    ActionBottomSheetDialog.showDialog(childFragmentManager, "Submit").apply {
+                        setOnItemClickListener {
+                            setData(it.ticket)
+                        }
+                    }
+                }
             }
         }
     }
@@ -238,11 +245,13 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             .addOnSuccessListener {
                 viewModel.getimages("${validatedTicket.id}")
             }.addOnFailureListener {
+                showLoading(false)
                 toast("Gagal menyimpan data")
             }
     }
 
     private fun storeImageToFirebase() {
+        showLoading(true)
         val fileName = "${validatedTicket.id}_$ticketStatus"
         val imageUri = File("${validatedImage.imagePath}").toUri()
         storageDb

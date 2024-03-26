@@ -50,7 +50,8 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
             }
 
             btnSubmit.apply {
-                isVisible = ticket.status != "Outbound" && tvBeratKeluar.text.toString() != NOT_EDITED
+                isVisible = ticket.status == "Inbound" ||
+                        (ticket.status == "Outbound" && tvBeratKeluar.text.toString() != NOT_EDITED)
                 setOnClickListener {
                     onItemClickListener?.let { it(ItemData(ACTION_SUBMIT, ticket)) }
                 }

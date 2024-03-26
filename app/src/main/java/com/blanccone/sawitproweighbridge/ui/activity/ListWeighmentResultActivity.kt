@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.blanccone.core.model.local.Ticket
@@ -15,7 +14,6 @@ import com.blanccone.core.ui.adapter.FilterChipAdapter
 import com.blanccone.core.ui.widget.FilterBottomSheet
 import com.blanccone.core.ui.widget.LoadingDialog
 import com.blanccone.core.util.Utils
-import com.blanccone.core.util.Utils.toast
 import com.blanccone.sawitproweighbridge.databinding.ActivityListWeighmentResultBinding
 import com.blanccone.sawitproweighbridge.ui.adapter.WeighmentTicketAdapter
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
@@ -24,7 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -104,7 +101,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
     }
 
     private fun fetchFromLocal() {
-        viewModel.gettickets()
+        viewModel.getTickets()
     }
 
     private fun updateTicketsToLocal(dataList: List<Ticket>) {

@@ -8,11 +8,9 @@ import android.view.LayoutInflater
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.util.Utils
-import com.blanccone.core.util.ViewUtils.startRefresh
 import com.blanccone.core.util.ViewUtils.stopRefresh
 import com.blanccone.sawitproweighbridge.databinding.ActivityHomeBinding
 import com.blanccone.sawitproweighbridge.ui.HomeMenuAdapter
@@ -93,7 +91,7 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
     }
 
     private fun fetchFromLocal() {
-        viewModel.gettickets()
+        viewModel.getTickets()
     }
 
     private fun setView(tickets: List<Ticket>) {

@@ -104,7 +104,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         setView()
         setEvent()
         setObserves()
-        setObservesFirebase()
         fetchData()
     }
 
@@ -137,6 +136,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             ticketStatus == DONE
         ) {
             ticketData?.let {
+                setObservesFirebase()
                 fetchFromLocal("${ticketData?.id}")
             }
         }
@@ -450,6 +450,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             .addOnSuccessListener {
                 storeImageToFirebase("${ticket["id"]}")
             }.addOnFailureListener {
+                showLoading(false)
                 toast("Gagal menyimpan data")
             }
     }
@@ -462,10 +463,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 .child(fileName)
                 .putFile(fileUri!!)
                 .addOnSuccessListener {
-                    showLoading(false)
                     storeDataToLocal()
                 }
                 .addOnFailureListener {
+                    showLoading(false)
                     toast("Gagal menyimpan data")
                 }
         }
@@ -513,7 +514,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     private fun getPermissionResult() {
         if (Utils.isAllowModifiedStorageAndCamera(this)) {
             openCamera()
-            toast("Open Camera")
         } else {
             toast("Mohon aktifkan izin Camera")
         }
