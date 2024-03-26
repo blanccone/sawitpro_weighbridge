@@ -94,7 +94,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 clear()
                 addAll(dataList)
             }
-            binding.rvFilter.isVisible = tickets.isNotEmpty()
             updateTicketList(tickets)
         }
 
@@ -152,8 +151,8 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun updateTicketList(dataList: List<Ticket>) {
-        ticketAdapter.updateTickets(dataList)
         binding.rvFilter.isVisible = dataList.isNotEmpty()
+        ticketAdapter.updateTickets(dataList)
     }
 
     private fun updateFilterList() {

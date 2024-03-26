@@ -72,7 +72,8 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
             val dataList = it.filter { ticket ->
                 ticket.status == "Done"
             }
-            updateTicketList(dataList)
+            tickets.addAll(dataList)
+            updateTicketList(tickets)
         }
     }
 
@@ -88,7 +89,6 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
                         }
                     }
                 }
-                binding.layoutListWeighment.rvFilter.isVisible = tickets.isNotEmpty()
                 updateTicketsToLocal(tickets)
             }
 
@@ -109,6 +109,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
     }
 
     private fun updateTicketList(dataList: List<Ticket>) {
+        binding.layoutListWeighment.rvFilter.isVisible = dataList.isNotEmpty()
         ticketAdapter.updateTickets(dataList)
     }
 
