@@ -38,6 +38,7 @@ class ImageUploaderView(
 
     private val binding get() = requireNotNull(_binding)
 
+    private var fieldTitle = ""
     private var fieldName = ""
     private var filePath = ""
 
@@ -94,13 +95,10 @@ class ImageUploaderView(
         }
     }
 
-    fun setFieldName(fieldName: String) {
+    fun setImageName(fieldName: String, fieldTitle: String) {
         this.fieldName = fieldName
+        this.fieldTitle = fieldTitle
         setContent()
-    }
-
-    fun getFieldName(): String {
-        return fieldName
     }
 
     private fun showPreviewFile(context: Context) {
@@ -143,12 +141,9 @@ class ImageUploaderView(
         }
     }
 
-    fun getFilePath(): String {
-        return filePath
-    }
-
     private fun setContent() {
         binding.apply {
+            tvImageTitle.text = fieldTitle
             if (filePath.isEmpty()) {
                 cslUpload.show()
                 ivResult.hide()

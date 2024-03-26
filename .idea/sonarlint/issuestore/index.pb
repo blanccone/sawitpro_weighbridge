@@ -35,8 +35,6 @@ q
 Aapp/src/main/java/com/blanccone/sawitproweighbridge/util/Const.kt,c/6/c681341c13c6e56c2abe085f4c057ee73dde14dc
 y
 Iapp/src/main/java/com/blanccone/sawitproweighbridge/ui/HomeMenuAdapter.kt,b/d/bd6539430e4514774f8f4e6f8f383bbde96d84fe
-t
-Dcore/src/main/java/com/blanccone/core/ui/widget/ImageUploaderView.kt,9/0/90547f31de16ef5626181588946c4abfcfbf0f12
 v
 Fcore/src/main/java/com/blanccone/core/ui/widget/ImageViewerActivity.kt,3/d/3da3822f0c41ab72f4d230887babadad76137cdb
 g
@@ -95,5 +93,3 @@ m
 =core/src/main/java/com/blanccone/core/di/ApplicationModule.kt,8/4/843804df04c15af2c68a3528ffafa31bc00f4700
 t
 Dcore/src/main/java/com/blanccone/core/ui/adapter/ViewPagerAdapter.kt,6/a/6ad6d5e2a002ef83ead6de323c5c65f35819581e
-g
-7core/src/main/java/com/blanccone/core/util/ViewUtils.kt,9/e/9e5ffc0c938e3fb92a8cf39161c5cb6b1ddde06a

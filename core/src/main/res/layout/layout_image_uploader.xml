@@ -13,11 +13,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <TextView
+            android:id="@+id/tv_image_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Foto"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/csl_image_selector_container"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/csl_image_selector_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_image_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_image_notes">
@@ -138,7 +148,7 @@
             tools:text="*wajib"
             android:textColor="@color/grey_65"
             android:textStyle="italic"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_constraintTop_toBottomOf="@id/csl_image_selector_container"
             app:layout_constraintStart_toStartOf="@id/csl_image_selector_container"
             app:layout_constraintBottom_toBottomOf="parent"/>

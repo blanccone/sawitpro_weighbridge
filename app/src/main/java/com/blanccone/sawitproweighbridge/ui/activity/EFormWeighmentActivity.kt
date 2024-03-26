@@ -20,6 +20,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import com.blanccone.core.R
 import com.blanccone.core.model.local.Ticket
 import com.blanccone.core.model.local.WeightImage
@@ -32,6 +33,7 @@ import com.blanccone.core.util.Utils.getCurrentDateTime
 import com.blanccone.core.util.Utils.reformatDate
 import com.blanccone.core.util.Utils.toast
 import com.blanccone.core.util.ViewUtils.backgroundTint
+import com.blanccone.core.util.ViewUtils.removeError
 import com.blanccone.core.util.ViewUtils.show
 import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
@@ -169,6 +171,18 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             if (ticketStatus in setOf(DONE, SECOND_WEIGHT)) {
                 fields[tilBeratMuatanKedua] = etBeratMuatanKedua
             }
+            etNoPol.doAfterTextChanged {
+                tilNoPol.removeError()
+            }
+            etNama.doAfterTextChanged {
+                tilNama.removeError()
+            }
+            etBeratMuatanPertama.doAfterTextChanged {
+                tilBeratMuatanPertama.removeError()
+            }
+            etBeratMuatanKedua.doAfterTextChanged {
+                tilBeratMuatanKedua.removeError()
+            }
         }
     }
 
@@ -223,11 +237,17 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             }
             iuvImageBeratMuatanFirst.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
-                setFieldName("${getCurrentDateTime("ddMMyyyyHH")}_$FIRST_PHOTO")
+                setImageName(
+                    "${getCurrentDateTime("ddMMyyyyHH")}_$FIRST_PHOTO",
+                    FIRST_PHOTO_LABEL
+                )
             }
             iuvImageBeratMuatanSecond.apply {
                 imageNotes = "*Foto akan menjadi bukti kebenaran input berat muatan"
-                setFieldName("${getCurrentDateTime("ddMMyyyyHH")}_$SECOND_PHOTO")
+                setImageName(
+                    "${getCurrentDateTime("ddMMyyyyHH")}_$SECOND_PHOTO",
+                    SECOND_PHOTO_LABEL
+                )
             }
             if (isPreviewRequested) disableView()
         }
@@ -336,7 +356,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     fileUri = null
                 }
             }
-            iuvImageBeratMuatanFirst.apply {
+            iuvImageBeratMuatanSecond.apply {
                 setOnCameraListener {
                     imageFieldName = it
                     openCamera()
@@ -389,7 +409,13 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     return
                 }
             }
-            binding.iuvImageBeratMuatanFirst.setFilePath(filePath!!)
+            with(binding){
+                if (ticketStatus == FIRST_WEIGHT) {
+                    iuvImageBeratMuatanFirst.setFilePath(filePath!!)
+                } else{
+                    iuvImageBeratMuatanSecond.setFilePath(filePath!!)
+                }
+            }
         }
     }
 
@@ -533,6 +559,15 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                 isValid = false
             }
         }
+        with(binding) {
+            val regex = Regex("[0-9]+")
+            val beratMuatanKedua = etBeratMuatanKedua.text.toString()
+            if (isValid && ticketStatus == SECOND_WEIGHT && !regex.matches(beratMuatanKedua)) {
+                tilBeratMuatanKedua.stateError("Data tidak valid")
+                etBeratMuatanKedua.requestFocus()
+                isValid = false
+            }
+        }
         if (!isValid) {
             toast("Mohon lengkapi data")
         }
@@ -549,6 +584,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
     companion object {
         private const val FIRST_PHOTO = "FIRST"
         private const val SECOND_PHOTO = "SECOND"
+        private const val FIRST_PHOTO_LABEL = "Foto Berat Muatan Pertama"
+        private const val SECOND_PHOTO_LABEL = "Foto Berat Muatan Kedua"
         const val NOT_EDITED = "Belum Terisi"
         const val FIRST_WEIGHT = "first"
         const val SECOND_WEIGHT = "second"

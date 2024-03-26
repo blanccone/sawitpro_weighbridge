@@ -70,6 +70,11 @@ object ViewUtils {
         } else this.error = string
     }
 
+    fun TextInputLayout.removeError(){
+        this.error = null
+        this.isErrorEnabled = false
+    }
+
     fun View.backgroundTint(color: Int){
         this.background.colorFilter = PorterDuffColorFilter(
             ContextCompat.getColor(this.context,color),
