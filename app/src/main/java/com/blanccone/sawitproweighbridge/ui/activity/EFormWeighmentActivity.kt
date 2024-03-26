@@ -131,7 +131,11 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         viewModel.updateTicketSuccessful.observe(this) {
             it?.let { isSuccessful ->
                 if (isSuccessful) {
-                    updateImageToLocal()
+                    if (ticketData?.secondWeight == NOT_EDITED) {
+                        storeImageToLocal("${validatedTicket.id}")
+                    } else {
+                        updateImageToLocal()
+                    }
                 }
             }
         }
