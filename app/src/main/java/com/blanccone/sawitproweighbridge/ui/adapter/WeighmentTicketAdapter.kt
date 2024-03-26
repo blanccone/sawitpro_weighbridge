@@ -46,10 +46,10 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
                 isVisible = ticket.status != INBOUND
                 text = ticket.secondWeight.toString()
             }
-            tvBeratBersihLabel.isVisible = isEditedOutbound(ticket)
-            tvBeratBersihColon.isVisible = isEditedOutbound(ticket)
+            tvBeratBersihLabel.isVisible = isEditedOutbound(ticket) || ticket.status == DONE
+            tvBeratBersihColon.isVisible = isEditedOutbound(ticket) || ticket.status == DONE
             tvBeratBersih.apply {
-                isVisible = isEditedOutbound(ticket)
+                isVisible = isEditedOutbound(ticket) || ticket.status == DONE
                 text = getNettWeight(ticket)
             }
             cslBtn.isVisible = ticket.status != DONE
