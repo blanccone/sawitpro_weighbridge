@@ -102,6 +102,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 if (isSuccessful) {
                     if (ticketStatus == FIRST_WEIGHT) {
                         toast("Data berhasil tersimpan ke Second Weight")
+                        fetchFromLocal()
                     } else {
                         requireActivity().apply {
                             setResult(Activity.RESULT_OK)
