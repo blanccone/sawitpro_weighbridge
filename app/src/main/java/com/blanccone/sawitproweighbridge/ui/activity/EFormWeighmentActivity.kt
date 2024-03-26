@@ -549,6 +549,7 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private fun isDataValid(): Boolean {
         var isValid = true
+        var message = "Mohon lengkapi data"
         for ((til, et) in fields) {
             if (et is TextInputEditText && et.text.isNullOrBlank()) {
                 til.stateError()
@@ -563,13 +564,18 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             val regex = Regex("[0-9]+")
             val beratMuatanKedua = etBeratMuatanKedua.text.toString()
             if (isValid && ticketStatus == SECOND_WEIGHT && !regex.matches(beratMuatanKedua)) {
-                tilBeratMuatanKedua.stateError("Data tidak valid")
+                tilBeratMuatanKedua.stateError("Berat muatan tidak valid")
                 etBeratMuatanKedua.requestFocus()
+                message = "Data tidak valid"
+                isValid = false
+            }
+            if (isValid && filePath.isNullOrBlank()) {
+                message = "Foto tidak boleh kosong"
                 isValid = false
             }
         }
         if (!isValid) {
-            toast("Mohon lengkapi data")
+            toast(message)
         }
         return isValid
     }
