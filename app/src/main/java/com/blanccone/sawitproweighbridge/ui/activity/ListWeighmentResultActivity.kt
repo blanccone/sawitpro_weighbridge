@@ -61,7 +61,8 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         setFilterListView()
         setEvent()
         setObserves()
-        fetchFromFirebase()
+        setObservesFirebase()
+        fetchFromLocal()
     }
 
     private fun setObserves() {
@@ -78,7 +79,7 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
         }
     }
 
-    private fun fetchFromFirebase() {
+    private fun setObservesFirebase() {
         firebaseDb.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tickets.clear()
@@ -128,6 +129,10 @@ class ListWeighmentResultActivity : CoreActivity<ActivityListWeighmentResultBind
 
     private fun setEvent() {
         with(binding.layoutListWeighment) {
+            srlRefresh.setOnRefreshListener {
+                srlRefresh.isRefreshing = false
+                fetchFromLocal()
+            }
             with(layoutSearch) {
                 etSearch.doAfterTextChanged {
                     searchData(it.toString())
