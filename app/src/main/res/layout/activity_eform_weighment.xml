@@ -85,7 +85,7 @@
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-                            android:inputType="text"
+                            android:inputType="textCapCharacters"
                             android:imeOptions="actionNext"
                             android:maxLength="10"
                             android:maxLines="1"/>
@@ -109,7 +109,7 @@
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
                             android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                            android:inputType="textPersonName"
+                            android:inputType="textCapWords"
                             android:imeOptions="actionDone"
                             android:maxLength="50"
                             android:maxLines="1"/>
