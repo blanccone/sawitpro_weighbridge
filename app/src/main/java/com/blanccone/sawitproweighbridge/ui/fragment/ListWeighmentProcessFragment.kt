@@ -254,7 +254,11 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
             .child("${validatedTicket.id}")
             .setValue(ticket)
             .addOnSuccessListener {
-                viewModel.getimages("${validatedTicket.id}")
+                if (ticketStatus == FIRST_WEIGHT) {
+                    viewModel.getimages("${validatedTicket.id}")
+                } else {
+                    updateDataToLocal()
+                }
             }.addOnFailureListener {
                 showLoading(false)
                 toast("Gagal menyimpan data")
