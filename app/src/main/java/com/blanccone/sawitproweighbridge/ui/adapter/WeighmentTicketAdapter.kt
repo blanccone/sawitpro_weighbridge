@@ -9,8 +9,6 @@ import com.blanccone.core.model.local.Ticket
 import com.blanccone.sawitproweighbridge.databinding.ItemWeighmentTicketBinding
 import com.blanccone.sawitproweighbridge.ui.activity.EFormWeighmentActivity.Companion.NOT_EDITED
 
-
-@SuppressLint("NotifyDataSetChanged")
 class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHolder>() {
 
     private val tickets = arrayListOf<Ticket>()
@@ -65,10 +63,11 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
 
     override fun getItemCount(): Int = tickets.size
 
+
     fun updateTickets(dataList: List<Ticket>) {
         tickets.clear()
         tickets.addAll(dataList)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, tickets.size)
     }
 
     private var onItemClickListener: ((ItemData) -> Unit)? = null
