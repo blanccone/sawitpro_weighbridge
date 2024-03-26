@@ -301,7 +301,10 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
                     SECOND_PHOTO_LABEL
                 )
             }
-            if (isPreviewRequested) disableView()
+            if (isPreviewRequested) {
+                disableView()
+                cslFooter.hide()
+            }
         }
     }
 
@@ -627,7 +630,6 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         with(binding) {
             iuvImageBeratMasuk.isPreviewOnly = true
             iuvImageBeratKeluar.isPreviewOnly = true
-            cslFooter.hide()
         }
     }
 
