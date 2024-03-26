@@ -29,10 +29,13 @@ class WeighmentViewModel @Inject constructor(
     val insertTicketSuccessful: LiveData<String?> = _insertTicketSuccessful
     fun insertTicket(ticket: Ticket) = viewModelScope.launch {
         persistenceRepository.insertTicket(ticket).collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
-                is Resource.Success -> _insertTicketSuccessful.postValue(ticket.id)
+                is Resource.Success -> {
+                    _isLoading.postValue(false)
+                    _insertTicketSuccessful.postValue(ticket.id)
+                }
                 is Resource.Error -> {
+                    _isLoading.postValue(false)
                     _insertTicketSuccessful.postValue(null)
                     _error.postValue(it.message ?: unknownMsg())
                 }
@@ -47,8 +50,14 @@ class WeighmentViewModel @Inject constructor(
         persistenceRepository.insertImage(image).collectLatest {
             _isLoading.postValue(it is Resource.Loading)
             when(it) {
-                is Resource.Success -> _insertImageSuccessful.postValue(true)
-                is Resource.Error -> _error.postValue(it.message ?: unknownMsg())
+                is Resource.Success -> {
+                    _isLoading.postValue(false)
+                    _insertImageSuccessful.postValue(true)
+                }
+                is Resource.Error -> {
+                    _isLoading.postValue(false)
+                    _error.postValue(it.message ?: unknownMsg())
+                }
                 else -> Unit
             }
         }
@@ -73,10 +82,13 @@ class WeighmentViewModel @Inject constructor(
     val updateTicketSuccessful: LiveData<Boolean?> = _updateTicketSuccessful
     fun updateTicket(ticket: Ticket) = viewModelScope.launch {
         persistenceRepository.updateTicket(ticket).collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
-                is Resource.Success -> _updateTicketSuccessful.postValue(true)
+                is Resource.Success -> {
+                    _isLoading.postValue(false)
+                    _updateTicketSuccessful.postValue(true)
+                }
                 is Resource.Error -> {
+                    _isLoading.postValue(false)
                     _updateTicketSuccessful.postValue(false)
                     _error.postValue(it.message ?: unknownMsg())
                 }
@@ -89,10 +101,13 @@ class WeighmentViewModel @Inject constructor(
     val updateImageSuccessful: LiveData<Boolean?> = _updateImageSuccessful
     fun updateImage(image: WeightImage) = viewModelScope.launch {
         persistenceRepository.updateImage(image).collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
-                is Resource.Success -> _updateImageSuccessful.postValue(true)
+                is Resource.Success -> {
+                    _isLoading.postValue(false)
+                    _updateImageSuccessful.postValue(true)
+                }
                 is Resource.Error -> {
+                    _isLoading.postValue(false)
                     _updateImageSuccessful.postValue(false)
                     _error.postValue(it.message ?: unknownMsg())
                 }
@@ -121,7 +136,6 @@ class WeighmentViewModel @Inject constructor(
     val insertTicketsSuccessful: LiveData<Boolean> = _insertTicketsSuccessful
     fun insertTickets(tickets: List<Ticket>) = viewModelScope.launch {
         persistenceRepository.insertTickets(tickets).collectLatest {
-            _isLoading.postValue(it is Resource.Loading)
             when(it) {
                 is Resource.Success -> _insertTicketsSuccessful.postValue(true)
                 is Resource.Error -> _error.postValue(it.message ?: unknownMsg())
