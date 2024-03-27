@@ -132,7 +132,6 @@ class HomeActivity : CoreActivity<ActivityHomeBinding>() {
 
     private fun getActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
-            Log.d("BAJINGAN", "RESULT_HOME")
             fetchFromLocal()
         }
     }

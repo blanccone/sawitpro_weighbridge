@@ -308,7 +308,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
     private fun getActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
-            Log.d("BAJINGAN", "RESULT_LIST")
             fetchFromLocal()
         }
     }
