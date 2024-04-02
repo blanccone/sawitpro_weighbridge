@@ -2,7 +2,6 @@ package com.blanccone.sawitproweighbridge.ui.fragment
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +51,8 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
     private val tickets = arrayListOf<Ticket>()
     private var selectedFilter = "Terlama"
+    private val calendar = Calendar.getInstance()
+    private val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
 
     private var validatedTicket = Ticket()
 
@@ -75,8 +76,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ticketStatus = arguments?.getString("ticketStatus") ?: ""
-        setTicketListView()
-        setFilterListView()
+        setView()
         setEvent()
         setObserves()
         setFirebaseObserves()
@@ -99,7 +99,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 clear()
                 addAll(dataList)
             }
-            updateTicketList(tickets)
+            filterData()
         }
 
         viewModel.updateTicketSuccessful.observe(viewLifecycleOwner) {
@@ -135,7 +135,7 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 }
                 if (tickets.isNotEmpty()) {
                     updateTicketsToLocal(tickets)
-                    updateTicketList(tickets)
+                    filterData()
                 } else {
                     fetchFromLocal()
                 }
@@ -166,12 +166,12 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
         filterAdapter.submitData(arrayListOf(selectedFilter))
     }
 
-    private fun setFilterListView() {
-        binding.rvFilter.adapter = filterAdapter
-    }
-
-    private fun setTicketListView() {
-        binding.rvTicket.adapter = ticketAdapter
+    private fun setView() {
+        with(binding){
+            rvFilter.adapter = filterAdapter
+            rvTicket.adapter = ticketAdapter
+            fabAddTicket.isVisible = ticketStatus == FIRST_WEIGHT
+        }
     }
 
     private fun setEvent() {
@@ -180,6 +180,16 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
                 srlRefresh.isRefreshing = false
                 fetchFromLocal()
             }
+
+            fabAddTicket.setOnClickListener {
+                resultLauncher.launch(
+                    EFormWeighmentActivity.resultInstance(
+                        context = requireContext(),
+                        status = FIRST_WEIGHT
+                    )
+                )
+            }
+
             with(layoutSearch) {
                 etSearch.doAfterTextChanged {
                     searchData(it.toString())
@@ -275,8 +285,6 @@ class ListWeighmentProcessFragment : CoreFragment<LayoutListWeighmentTicketBindi
     }
 
     private fun filterData() {
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val sortedTickets = when (selectedFilter) {
             FilterBottomSheet.URUTKAN_NAMA_AZ -> tickets.sortedByDescending { it.driverName }
             FilterBottomSheet.URUTKAN_NAMA_ZA -> tickets.sortedBy { it.driverName }

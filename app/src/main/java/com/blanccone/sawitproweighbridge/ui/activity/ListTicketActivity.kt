@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.blanccone.core.ui.activity.CoreActivity
 import com.blanccone.core.ui.adapter.ViewPagerAdapter
 import com.blanccone.sawitproweighbridge.databinding.ActivityListTicketBinding
@@ -34,7 +34,6 @@ class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
             setDisplayShowHomeEnabled(true)
         }
         setViewPager()
-        setEvent()
         onBackPressedEvent()
     }
 
@@ -49,23 +48,6 @@ class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
             TabLayoutMediator(tlTicket, vpTicket) { tab, position ->
                 tab.text = viewPagerAdapter.getTitle(position)
             }.attach()
-        }
-    }
-
-    private fun setEvent() {
-        with(binding) {
-            vpTicket.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    fabAddTicket.isVisible = position == 0
-                }
-            })
-
-            fabAddTicket.setOnClickListener {
-                EFormWeighmentActivity.newInstance(
-                    this@ListTicketActivity,
-                    FIRST_WEIGHT
-                )
-            }
         }
     }
 
@@ -87,7 +69,7 @@ class ListTicketActivity : CoreActivity<ActivityListTicketBinding>() {
 
     companion object {
 
-        fun resultInstance(context: Context) : Intent {
+        fun resultInstance(context: Context): Intent {
             return Intent(context, ListTicketActivity::class.java)
         }
     }

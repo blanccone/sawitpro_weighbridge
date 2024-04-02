@@ -56,6 +56,7 @@ class WeighmentViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _isLoading.postValue(false)
+                    _insertImageSuccessful.postValue(false)
                     _error.postValue(it.message ?: unknownMsg())
                 }
                 else -> Unit

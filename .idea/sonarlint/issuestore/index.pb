@@ -1,18 +1,10 @@
 
-I
-buildSrc/build.gradle.kts,d/9/d90b697280fada81e52ec92d24725920f1cb087b
-@
-build.gradle.kts,d/b/dbcff70658daf80b53ce624f6adcaa529df5ed8d
 X
 (gradle/wrapper/gradle-wrapper.properties,f/b/fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
-D
-app/build.gradle.kts,d/2/d2a4383452aad84a18429a5844d31330a012a9e6
 ^
 .buildSrc/src/main/kotlin/BuildAndroidConfig.kt,0/f/0f128440e92f0ebf299a933bbd7fd9a4cc88c409
 F
 app/proguard-rules.pro,9/e/9e08934d811afe28fbc77aaa3c0d747b94348db9
-P
- buildSrc/src/main/kotlin/Libs.kt,e/9/e9d78a4d98854247532ab6e0a00fa572b36ee871
 C
 settings.gradle.kts,7/4/749edfcc96398253e5b3416184e95c46621da850
 E
@@ -21,8 +13,6 @@ k
 ;buildSrc/src/main/kotlin/commons/android-library.gradle.kts,f/6/f6ff6c4c702a1d71f6e6e8de9ca97a7ce45f4579
 A
 gradle.properties,2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4
-T
-$buildSrc/src/main/kotlin/Versions.kt,d/f/df7250bdfd4d4cbe77a1ebc3b950afc6e6bcfecd
 Q
 !core/src/main/AndroidManifest.xml,a/e/ae00e14a93cb05cbe86f462a3bad74d51f6b1afc
 P
@@ -87,25 +77,25 @@ k
 ;core/src/main/java/com/blanccone/core/model/local/Ticket.kt,4\6\467ce12cdee4cf4f7d7b2f92a3541bffdfa5d6d0
 z
 Jpersistence/src/main/java/com/blanccone/persistence/entity/TicketEntity.kt,9\1\914fc091f8a93a7e79e49a14f6ea8421e4f85581
-q
-Acore/src/main/java/com/blanccone/core/ui/fragment/CoreFragment.kt,0\6\069dd3a7818316898336307b144c5de95cc4a061
 c
 3core/src/main/java/com/blanccone/core/util/Utils.kt,d\7\d7f0784a37b9b38559e32e8f3fdba4114a489bec
 t
 Dcore/src/main/java/com/blanccone/core/ui/widget/ImageUploaderView.kt,9\0\90547f31de16ef5626181588946c4abfcfbf0f12
 g
 7core/src/main/java/com/blanccone/core/util/ViewUtils.kt,9\e\9e5ffc0c938e3fb92a8cf39161c5cb6b1ddde06a
-Ö
-Uapp/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/ListTicketActivity.kt,0\8\08820c49d2b5fbe5ea8463585f8e54d0afe7ffe6
 z
 Jcore/src/main/java/com/blanccone/core/ui/widget/ActionBottomSheetDialog.kt,6\6\666da30fbac662207dd3af5e0077e0d2487c42dd
-è
-_persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e\b\ebd44b47a66c279845b82439d664c55afe9aded5
 è
 _persistence/src/main/java/com/blanccone/persistence/service/datasource/PersistenceDataSource.kt,f\5\f5cd0029135857d3e5fbc282df72256d3a341a9c
 ì
 cpersistence/src/main/java/com/blanccone/persistence/service/datasource/PersistenceDataSourceImpl.kt,f\3\f309bf3fbfffb8f4ddbc6346e11d76871b48c433
 m
 =persistence/src/main/java/com/blanccone/persistence/AppDao.kt,2\b\2b56aeada06d30143fd1b5f6ad8b1107eba1338f
-Ü
-Vapp/src/main/java/com/blanccone/sawitproweighbridge/ui/viewmodel/WeighmentViewModel.kt,2\b\2bc96a5ed2034ab4be554c4f7bf7c5283a3be8b3
+é
+^app/src/main/java/com/blanccone/sawitproweighbridge/ui/activity/ListWeighmentResultActivity.kt,8\9\89cba78d9f690efe79b03e677205e97e8d83421a
+à
+Xapp/src/main/java/com/blanccone/sawitproweighbridge/ui/adapter/WeighmentTicketAdapter.kt,d\a\da703cefb16a64256ae28694f1df084d38835ff6
+P
+ buildSrc/src/main/kotlin/Libs.kt,e\9\e9d78a4d98854247532ab6e0a00fa572b36ee871
+T
+$buildSrc/src/main/kotlin/Versions.kt,d\f\df7250bdfd4d4cbe77a1ebc3b950afc6e6bcfecd

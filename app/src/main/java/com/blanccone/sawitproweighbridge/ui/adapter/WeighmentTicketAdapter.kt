@@ -99,7 +99,6 @@ class WeighmentTicketAdapter: RecyclerView.Adapter<WeighmentTicketAdapter.ViewHo
 
     override fun getItemCount(): Int = tickets.size
 
-
     @SuppressLint("NotifyDataSetChanged")
     fun updateTickets(dataList: List<Ticket>) {
         tickets.clear()

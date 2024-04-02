@@ -8,14 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -155,7 +154,8 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
         viewModel.updateImageSuccessful.observe(this) {
             it?.let { isSuccessful ->
                 if (isSuccessful) {
-                    toast("Data berhasil tersimpan")
+                    toast("Data berhasil diperbarui")
+                    setResult(Activity.RESULT_OK)
                     finish()
                 }
             }
