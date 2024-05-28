@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.EditText
@@ -41,6 +40,7 @@ import com.blanccone.core.util.ViewUtils.stateError
 import com.blanccone.sawitproweighbridge.BuildConfig
 import com.blanccone.sawitproweighbridge.databinding.ActivityEformWeighmentBinding
 import com.blanccone.sawitproweighbridge.ui.viewmodel.WeighmentViewModel
+import com.blanccone.sawitproweighbridge.util.TestWatcher
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DatabaseReference
@@ -414,6 +414,33 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
 
     private fun setEvent() {
         with(binding) {
+            etAngka1.addTextChangedListener(
+                object : TestWatcher(etAngka1) {
+                    override fun getCurrentTotal(): Int {
+                        val total = etAngka2.text.toString().replace("%", "")
+                        return if (total.isNumber()) total.toInt()
+                        else 0
+                    }
+
+                    override fun doAfterTextChanged() {
+                        updateTotal()
+                    }
+                }
+            )
+            etAngka2.addTextChangedListener(
+                object : TestWatcher(etAngka2) {
+                    override fun getCurrentTotal(): Int {
+                        val total = etAngka1.text.toString().replace("%", "")
+                        return if (total.isNumber()) total.toInt()
+                        else 0
+                    }
+
+                    override fun doAfterTextChanged() {
+                        updateTotal()
+                    }
+                }
+            )
+
             iuvImageBeratMasuk.apply {
                 setOnCameraListener {
                     imageFieldName = it
@@ -437,6 +464,20 @@ class EFormWeighmentActivity : CoreActivity<ActivityEformWeighmentBinding>() {
             btnSimpan.setOnClickListener {
                 if (isDataValid()) setData()
             }
+        }
+    }
+
+    private fun updateTotal() {
+        with(binding) {
+            val sAngka1 = etAngka1.text.toString().replace("%", "")
+            val nAngka1 = if (sAngka1.isNumber()) sAngka1.toInt()
+            else 0
+            val sAngka2 = etAngka2.text.toString().replace("%", "")
+            val nAngka2 = if (sAngka2.isNumber()) sAngka2.toInt()
+            else 0
+
+            val total = nAngka1 + nAngka2
+            etAngka3.setText("$total%")
         }
     }
 

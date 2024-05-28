@@ -116,6 +116,72 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_angka1"
+                        style="@style/MainTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Nama Pengemudi">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_angka1"
+                            style="@style/MainEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            android:inputType="number"
+                            android:maxLength="50"
+                            android:maxLines="1"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_angka2"
+                        style="@style/MainTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Nama Pengemudi">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_angka2"
+                            style="@style/MainEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            android:inputType="number"
+                            android:maxLength="50"
+                            android:maxLines="1"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_angka3"
+                        style="@style/MainTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Nama Pengemudi">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_angka3"
+                            style="@style/MainEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            android:inputType="number"
+                            android:maxLength="50"
+                            android:maxLines="1"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

@@ -21,8 +21,6 @@ X
 (buildSrc/src/main/kotlin/BuildPlugins.kt,9/e/9e2e0d8eb8e3b13f91659c6c7452a9338578a575
 i
 9core/src/main/java/com/blanccone/core/model/local/Menu.kt,2/0/20640607b4e806f70dbc27e2626c3f4c1d9a2515
-q
-Aapp/src/main/java/com/blanccone/sawitproweighbridge/util/Const.kt,c/6/c681341c13c6e56c2abe085f4c057ee73dde14dc
 y
 Iapp/src/main/java/com/blanccone/sawitproweighbridge/ui/HomeMenuAdapter.kt,b/d/bd6539430e4514774f8f4e6f8f383bbde96d84fe
 v
@@ -45,8 +43,6 @@ w
 G.idea/sonarlint/issuestore/9/e/9e2e0d8eb8e3b13f91659c6c7452a9338578a575,b/d/bdd03509d3c8dbb5f3f0819cf351c82361798526
 Å
 Q.idea/sonarlint/securityhotspotstore/9/e/9e2e0d8eb8e3b13f91659c6c7452a9338578a575,7/6/768036f538563713f9a43503e5aed725f8341708
-~
-Napp/src/main/java/com/blanccone/sawitproweighbridge/util/CommonFileProvider.kt,d/4/d472f6337147f5add4c0bb3b49b0e0105b210897
 S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 X
@@ -99,3 +95,15 @@ P
  buildSrc/src/main/kotlin/Libs.kt,e\9\e9d78a4d98854247532ab6e0a00fa572b36ee871
 T
 $buildSrc/src/main/kotlin/Versions.kt,d\f\df7250bdfd4d4cbe77a1ebc3b950afc6e6bcfecd
+@
+build.gradle.kts,d\b\dbcff70658daf80b53ce624f6adcaa529df5ed8d
+D
+app/build.gradle.kts,d\2\d2a4383452aad84a18429a5844d31330a012a9e6
+I
+buildSrc/build.gradle.kts,d\9\d90b697280fada81e52ec92d24725920f1cb087b
+è
+_persistence/src/main/java/com/blanccone/persistence/service/repository/PersistenceRepository.kt,e\b\ebd44b47a66c279845b82439d664c55afe9aded5
+q
+Acore/src/main/java/com/blanccone/core/ui/fragment/CoreFragment.kt,0\6\069dd3a7818316898336307b144c5de95cc4a061
+~
+Napp/src/main/java/com/blanccone/sawitproweighbridge/util/CommonFileProvider.kt,d\4\d472f6337147f5add4c0bb3b49b0e0105b210897
